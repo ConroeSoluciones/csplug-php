@@ -10,14 +10,14 @@ class ExceptionFactory
 {
     public static function createFromResponse(HttpResponse $response): ApiException
     {
-        $body = $response->toArray();
+        $body = $response->bodyAsArray();
         $message = $body['message'] ?? 'Unknown Error';
         
-        return match ($response->statusCode) {
+        return match ($response->getCode()) {
             400 => new ValidationException($message, 400, null, $body),
             401 => new UnauthorizedException('Unauthorized: ' . $message, 401, null, $body),
             404 => new NotFoundException('Not Found: ' . $message, 404, null, $body),
-            default => new ApiException('HTTP Error: ' . $message, $response->statusCode, null, $body),
+            default => new ApiException('HTTP Error: ' . $message, $response->getCode(), null, $body),
         };
     }
 }

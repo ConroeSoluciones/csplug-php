@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Csfacturacion\CsPlug\Util;
 
 use Csfacturacion\CsPlug\Model\HttpRequest;
+use Csfacturacion\CsPlug\Model\Builder;
 use Csfacturacion\CsPlug\Model\HttpResponse;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -38,17 +39,28 @@ class HttpClient
      */
     public function send(HttpRequest $request): HttpResponse
     {
-        $this->logger->info(sprintf('Sending %s request to %s', $request->method, $request->url));
+        $this->logger->info(sprintf('Sending %s request to %s', $request->getHttpMethod()->name, $request->getUrl()));
+
+        $options = [
+            "headers" => $request->getHeaders(),
+        ];
+
+        if($request->getParams()->getEntity() instanceof Builder) {
+            $options['json'] = $request->getParams()->getEntity()->build();
+        } elseif($request->getParams()->getEntity()) {
+            $options['json'] = $request->getParams()->getEntity();
+        }
+
 
         $response = $this->client->request(
-            $request->method,
-            $request->url,
-            $request->options
+            $request->getHttpMethod()->name,
+            $request->getUrl(),
+            $options
         );
 
         return new HttpResponse(
-            $response->getStatusCode(),
             $response->getContent(false),
+            $response->getStatusCode(),
             $response->getHeaders(false)
         );
     }

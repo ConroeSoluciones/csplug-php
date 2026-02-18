@@ -4,25 +4,62 @@ declare(strict_types=1);
 
 namespace Csfacturacion\CsPlug\Model;
 
+use Csfacturacion\CsPlug\Util\Deserializable;
+use JsonException;
+use RuntimeException;
 final class HttpResponse
 {
     public function __construct(
-        public int $statusCode,
-        public string $body,
-        public array $headers = []
+        private readonly string $rawResponse,
+        private readonly int $code,
+        private readonly array $headers = []
     ) {
     }
 
     public function isSuccess(): bool
     {
-        return $this->statusCode >= 200 && $this->statusCode < 300;
+        return $this->code >= 200 && $this->code < 300;
+    }
+
+    public function getRawResponse(): string
+    {
+        return $this->rawResponse;
+    }
+
+    public function getCode(): int
+    {
+        return $this->code;
+    }
+
+    public function getHeaders(): array
+    {
+        return $this->headers;
     }
 
     /**
-     * @return array<string, mixed>
+     * @param class-string<T> $class
+     *
+     * @return T|T[]
+     *
+     * @throws JsonException
+     *
+     * @template T of Deserializable
      */
-    public function toArray(): array
+    public function bodyAsModel(string $class): Deserializable | array
     {
-        return json_decode($this->body, true, 512, JSON_THROW_ON_ERROR);
+        /** @var T|T[] $model */
+        $model = $class::fromJson($this->rawResponse);
+
+        return $model;
+    }
+
+    // phpcs:ignore SlevomatCodingStandard.TypeHints.ReturnTypeHint
+    public function bodyAsArray(): array // @phpstan-ignore missingType.iterableValue
+    {
+        try {
+            return (array) json_decode($this->rawResponse, true, 512, JSON_THROW_ON_ERROR);
+        } catch (JsonException $e) {
+            throw new RuntimeException($e->getMessage());
+        }
     }
 }

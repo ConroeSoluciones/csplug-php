@@ -11,10 +11,30 @@ final class RequestOptions
      * @param array<string, mixed> $query
      */
     public function __construct(
-        public ?string $xRfc = null,
-        public ?string $xServicio = null,
-        public array $headers = [],
-        public array $query = []
+        private readonly ?string $xRfc = null,
+        private readonly ?Service $xServicio = null,
+        private readonly array $headers = [],
+        private readonly array $query = [],
     ) {
+    }
+
+    public function getXRfc(): ?string
+    {
+        return $this->xRfc;
+    }
+
+    public function getXServicio(): ?Service
+    {
+        return $this->xServicio;
+    }
+
+    public function getHeaders(): array
+    {
+        return $this->headers;
+    }
+
+    public function getQuery(): array
+    {
+        return $this->query;
     }
 }

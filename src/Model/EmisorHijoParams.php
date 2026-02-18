@@ -7,6 +7,7 @@ namespace Csfacturacion\CsPlug\Model;
 final class EmisorHijoParams
 {
     private array $configuracion = [];
+    private EmisorHijoConfiguracion $configuracionEmisor;
     
     // Constructor privado para forzar el uso de métodos estáticos o fluent si se prefiere,
     // o público si queremos instanciación directa. 

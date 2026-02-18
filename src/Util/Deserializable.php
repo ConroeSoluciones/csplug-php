@@ -6,5 +6,5 @@ namespace Csfacturacion\CsPlug\Util;
 
 interface Deserializable
 {
-    public static function fromJson(string $json): self;
+    public static function fromJson(string $raw): array|self;
 }

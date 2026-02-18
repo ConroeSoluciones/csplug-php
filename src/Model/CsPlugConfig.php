@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Csfacturacion\CsPlug\Model;
 
+use InvalidArgumentException;
+
 final class CsPlugConfig
 {
     private const DEFAULT_BASE_URI = 'https://csplug.csfacturacion.com';
@@ -21,6 +23,7 @@ final class CsPlugConfig
         public int $connectTimeout = 10,
         public bool $debug = false
     ) {
+        $this->validate();
     }
 
     /**
@@ -30,18 +33,29 @@ final class CsPlugConfig
     {
         return new self(
             baseUri: $options['base_uri'] ?? self::DEFAULT_BASE_URI,
-            authMode: isset($options['auth_mode']) 
-                ? AuthMode::from($options['auth_mode']) 
+            authMode: isset($options['auth_mode']) && $options['auth_mode'] instanceof AuthMode
+                ? $options['auth_mode']
                 : AuthMode::BASIC,
             username: $options['username'] ?? null,
             password: $options['password'] ?? null,
-            basicTokenBase64: $options['basic_token_base64'] ?? null,
-            bearerToken: $options['bearer_token'] ?? null,
             xRfc: $options['x_rfc'] ?? null,
-            xServicio: $options['x_servicio'] ?? null,
+            xServicio: isset($options['x_servicio']) && $options['x_servicio'] instanceof Service ? $options['x_servicio'] : Service::CSPLUG,
             timeout: (int) ($options['timeout'] ?? 30),
             connectTimeout: (int) ($options['connect_timeout'] ?? 10),
             debug: (bool) ($options['debug'] ?? false)
         );
+    }
+
+    function validate(): bool{
+        if($this->authMode === AuthMode::BASIC){
+            empty($this->username) ?? throw new InvalidArgumentException("El usuario no puede ser vacío");
+            empty($this->password) ?? throw new InvalidArgumentException("El password no puede ser vacío");
+        }
+
+        if($this->authMode === AuthMode::BEARER && empty($this->bearerToken)){
+            throw new InvalidArgumentException("El bearer token es requerido.");
+        }
+
+        return true;
     }
 }
