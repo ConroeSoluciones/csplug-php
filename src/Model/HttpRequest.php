@@ -8,19 +8,19 @@ class HttpRequest
 {
     private HttpMethod $httpMethod;
     private string $url;
-    private ?Parameters $params;
+    private \JsonSerializable|array|null $body;
     private array $headers;
 
     public function __construct(
         string $url,
-        ?Parameters $params,
+        \JsonSerializable|array|null $body = null,
         HttpMethod $method = HttpMethod::GET,
     ) {
         $this->httpMethod = $method;
         $this->url = $url;
-        $this->params = $params;
+        $this->body = $body;
         $this->headers = [];
-        if($params->getEntity()) {
+        if($body !== null) {
             $this->headers['Content-Type'] = 'application/json';
         }
     }
@@ -35,9 +35,9 @@ class HttpRequest
         return $this->url;
     }
 
-    public function getParams(): Parameters
+    public function getBody(): \JsonSerializable|array|null
     {
-        return $this->params;
+        return $this->body;
     }
 
     public function getHeaders(): array

@@ -4,40 +4,39 @@ declare(strict_types=1);
 
 namespace Csfacturacion\CsPlug\Resources;
 
-use Csfacturacion\CsPlug\Error\ApiException;
 use Csfacturacion\CsPlug\Model\EmisorHijo;
-use Csfacturacion\CsPlug\Model\EmisorHijoBuilder;
 use Csfacturacion\CsPlug\Model\HttpMethod;
 use Csfacturacion\CsPlug\Model\PaginatedResponse;
-use Csfacturacion\CsPlug\Model\ParametersBuilder;
 use Csfacturacion\CsPlug\Model\RequestOptions;
+use JsonException;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
+use Throwable;
 
-use Csfacturacion\CsPlug\Model\EmisorHijoParams;
 
 final class EmisoresHijosResource extends BaseResource
 {
     use ResponseHandlerTrait;
 
+    private const ENDPOINT = '/emisores-hijos';
+
     /**
-     * @param RequestOptions $options
+     * @param RequestOptions|null $options
      * @return PaginatedResponse
      * @throws ClientExceptionInterface
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
-     * @throws \JsonException
-     * @throws \Throwable
+     * @throws JsonException
+     * @throws Throwable
      */
-    public function list(RequestOptions $options): PaginatedResponse
+    public function list(?RequestOptions $options = null): PaginatedResponse
     {
-        $parametersBuilder = (new ParametersBuilder()) -> withQueryParams($options->getQuery());
         $request = $this->requestFactory->createRequest(
-            uri: "/emisores-hijos",
-            params: $parametersBuilder -> build(),
+            uri: self::ENDPOINT,
+            queryParams: $options?->getQuery() ?? [],
             options: $options
         );
 
@@ -45,8 +44,13 @@ final class EmisoresHijosResource extends BaseResource
         
         $this->handleResponse($response);
 
-        $items = $response->bodyAsModel(EmisorHijo::class);
         $body = $response->bodyAsArray();
+        $data = $body['data'] ?? [];
+
+        $items = array_map(
+            static fn(array $item): EmisorHijo => EmisorHijo::fromArray($item),
+            $data
+        );
 
         return new PaginatedResponse(
             $items,
@@ -56,28 +60,31 @@ final class EmisoresHijosResource extends BaseResource
     }
 
     /**
-     * @param EmisorHijoBuilder $emisorHijoBuilder
+     * Creates a new EmisorHijo resource.
+     * @param EmisorHijo $emisorHijo
      * @param RequestOptions|null $options
      * @return EmisorHijo
      * @throws ClientExceptionInterface
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
-     * @throws \JsonException
-     * @throws \Throwable
+     * @throws JsonException
+     * @throws Throwable
      */
-    public function create(EmisorHijoBuilder $emisorHijoBuilder, ?RequestOptions $options = null): EmisorHijo
+    public function create(EmisorHijo $emisorHijo, ?RequestOptions $options = null): EmisorHijo
     {
-        $parametersBuilder = (new ParametersBuilder()) -> withQueryParams($options->getQuery())->withEntity($emisorHijoBuilder->build());
         $request = $this->requestFactory->createRequest(
-            uri: "/emisores-hijos",
-            params: $parametersBuilder -> build(),
+            uri: self::ENDPOINT,
+            body: $emisorHijo,
             method: HttpMethod::POST,
             options: $options
         );
 
         $response = $this->client->send($request);
         $this->handleResponse($response);
-        return $response->bodyAsModel(EmisorHijo::class);
+
+        $body = $response->bodyAsArray();
+        $data = $body['data'] ?? $body;
+        return EmisorHijo::fromArray($data);
     }
 }

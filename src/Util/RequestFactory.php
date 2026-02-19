@@ -7,9 +7,9 @@ namespace Csfacturacion\CsPlug\Util;
 use Csfacturacion\CsPlug\Model\CsPlugConfig;
 use Csfacturacion\CsPlug\Model\HttpMethod;
 use Csfacturacion\CsPlug\Model\HttpRequest;
-use Csfacturacion\CsPlug\Model\Parameters;
 use Csfacturacion\CsPlug\Model\RequestOptions;
 use Csfacturacion\CsPlug\Model\AuthMode;
+use JsonSerializable;
 use RuntimeException;
 
 class RequestFactory
@@ -21,14 +21,16 @@ class RequestFactory
 
     /**
      * @param string $uri
-     * @param Parameters $params
+     * @param array $queryParams
+     * @param JsonSerializable|array|null $body
      * @param HttpMethod $method
      * @param RequestOptions|null $options
      * @return HttpRequest
      */
     public function createRequest(
         string $uri,
-        Parameters $params,
+        array $queryParams = [],
+        JsonSerializable|array|null $body = null,
         HttpMethod $method = HttpMethod::GET,
         ?RequestOptions $options = null,
     ): HttpRequest {
@@ -39,7 +41,7 @@ class RequestFactory
             'X-Servicio' => $xServicio->value,
             'Authorization' => $this->resolveAuthorizationToken(),
         ];
-        $xRfc = $options?->getXRfc() ?? $this->config->xRfc;
+        $xRfc = $options?->getContractId() ?? $this->config->contractId;
 
         if(empty($xRfc) && $this->config->authMode === AuthMode::BEARER) throw new RuntimeException('No tienes permiso para acceder a este recurso');
 
@@ -54,13 +56,13 @@ class RequestFactory
         }
 
         $url = $this->config->baseUri . $uri;
-        if ($params->getQueryParams()) {
-            $url .= '?' . http_build_query($params->getQueryParams());
+        if (!empty($queryParams)) {
+            $url .= '?' . http_build_query($queryParams);
         }
 
         $req = new HttpRequest(
             url: $url,
-            params: $params,
+            body: $body,
             method: $method,
         );
 

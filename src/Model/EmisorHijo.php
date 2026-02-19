@@ -46,7 +46,6 @@ final class EmisorHijo implements Deserializable, \JsonSerializable
     public static function fromJson(string $raw): array|self
     {
         $data = (array) json_decode($raw, true, 512, JSON_THROW_ON_ERROR);
-        $data = $data['data'] ?? $data;
 
         $isList = array_is_list($data);
         $dataList = $isList ? $data : [$data];
@@ -65,7 +64,7 @@ final class EmisorHijo implements Deserializable, \JsonSerializable
         return $isList ? $models : $models[0];
     }
 
-    private static function fromArray(array $data): self{
+    public static function fromArray(array $data): self{
         return (new EmisorHijoBuilder())
             ->withRfc(new Rfc($data['RFC']))
             ->withRazonSocial($data['RAZONSOCIAL'])
@@ -92,7 +91,7 @@ final class EmisorHijo implements Deserializable, \JsonSerializable
         ];
 
         if($this->getConfiguracion())
-            $data['configuracion'] = $this->getConfiguracion()->jsonSerialize();
+            $data['configuracion'] = $this->getConfiguracion();
 
         return $data;
     }

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Csfacturacion\CsPlug\Util;
 
 use Csfacturacion\CsPlug\Model\HttpRequest;
-use Csfacturacion\CsPlug\Model\Builder;
 use Csfacturacion\CsPlug\Model\HttpResponse;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -45,12 +44,9 @@ class HttpClient
             "headers" => $request->getHeaders(),
         ];
 
-        if($request->getParams()->getEntity() instanceof Builder) {
-            $options['json'] = $request->getParams()->getEntity()->build();
-        } elseif($request->getParams()->getEntity()) {
-            $options['json'] = $request->getParams()->getEntity();
+        if($request->getBody()) {
+            $options['json'] = $request->getBody();
         }
-
 
         $response = $this->client->request(
             $request->getHttpMethod()->name,
