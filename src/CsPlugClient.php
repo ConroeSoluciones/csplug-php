@@ -43,6 +43,11 @@ final class CsPlugClient
         return new CertificadosResource($this->client, $this->requestFactory, $this->config);
     }
 
+    public function plantillas(): PlantillasResource
+    {
+        return new PlantillasResource($this->client, $this->requestFactory, $this->config);
+    }
+
     public function seriesEmisorHijo(): SeriesEmisorHijoResource
     {
         return new SeriesEmisorHijoResource($this->client, $this->requestFactory, $this->config);

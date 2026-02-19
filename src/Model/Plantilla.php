@@ -15,14 +15,18 @@ final class Plantilla implements Deserializable
     ) {
     }
 
-    public static function fromJson(string $json): self
+    public static function fromArray(array $data): self
     {
-        $data = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
-
         return new self(
             (int) ($data['IDPLANTILLA'] ?? 0),
             $data['NOMBRE_SERVICE'] ?? '',
             $data['CLAVEPLANTILLA'] ?? ''
         );
+    }
+
+    public static function fromJson(string $json): self
+    {
+        $data = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
+        return self::fromArray($data);
     }
 }

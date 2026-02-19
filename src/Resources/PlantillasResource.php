@@ -14,15 +14,18 @@ final class PlantillasResource extends BaseResource
 
     public function list(?RequestOptions $options = null): PaginatedResponse
     {
-        $request = $this->requestFactory->createRequest('GET', '/plantillas', $options);
+        $request = $this->requestFactory->createRequest(
+            uri: '/plantillas',
+            options: $options
+        );
         $response = $this->client->send($request);
 
         $this->handleResponse($response);
         
-        $body = $response->toArray();
+        $body = $response->bodyAsArray();
         
         $items = array_map(
-            fn($item) => Plantilla::fromJson(json_encode($item)), 
+            fn($item) => Plantilla::fromArray($item), 
             $body['data'] ?? []
         );
 
