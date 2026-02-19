@@ -15,7 +15,6 @@ final class CsPlugConfig
         public AuthMode $authMode = AuthMode::BASIC,
         public ?string $username = null,
         public ?string $password = null,
-        public ?string $basicTokenBase64 = null,
         public ?string $bearerToken = null,
         public ?string $contractId = null,
         public Service $xServicio = Service::CSPLUG,
@@ -33,13 +32,16 @@ final class CsPlugConfig
     {
         return new self(
             baseUri: $options['base_uri'] ?? self::DEFAULT_BASE_URI,
-            authMode: isset($options['auth_mode']) && $options['auth_mode'] instanceof AuthMode
-                ? $options['auth_mode']
+            authMode: isset($options['auth_mode'])
+                ? ($options['auth_mode'] instanceof AuthMode ? $options['auth_mode'] : AuthMode::tryFrom($options['auth_mode']) ?? AuthMode::BASIC)
                 : AuthMode::BASIC,
             username: $options['username'] ?? null,
             password: $options['password'] ?? null,
+            bearerToken: $options['bearer_token'] ?? null,
             contractId: $options['contract_id'] ?? $options['x_rfc'] ?? null,
-            xServicio: isset($options['x_servicio']) && $options['x_servicio'] instanceof Service ? $options['x_servicio'] : Service::CSPLUG,
+            xServicio: isset($options['x_servicio'])
+                ? ($options['x_servicio'] instanceof Service ? $options['x_servicio'] : Service::tryFrom($options['x_servicio']) ?? Service::CSPLUG)
+                : Service::CSPLUG,
             timeout: (int) ($options['timeout'] ?? 30),
             connectTimeout: (int) ($options['connect_timeout'] ?? 10),
             debug: (bool) ($options['debug'] ?? false)
