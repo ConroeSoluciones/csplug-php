@@ -17,12 +17,14 @@ use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Throwable;
 
-final class CertificadosResource extends BaseResource
+final class CertificadosEmisorHijoResource extends BaseResource
 {
     use ResponseHandlerTrait;
 
     /**
-     * Get global certificates.
+     * Get certificates for a child issuer (RFC).
+     * @param string $rfc The child issuer RFC.
+     * @param int $page Page number
      * @param RequestOptions|null $options
      * @return PaginatedResponse
      * @throws ApiException
@@ -33,9 +35,9 @@ final class CertificadosResource extends BaseResource
      * @throws TransportExceptionInterface
      * @throws Throwable
      */
-    public function list(?RequestOptions $options = null): PaginatedResponse
+    public function list(string $rfc, ?RequestOptions $options = null): PaginatedResponse
     {
-        $path = '/certificados';
+        $path = sprintf('/emisores-hijos/%s/certificados', $rfc);
         $queryParams = $options?->getQuery() ?? [];
 
         $request = $this->requestFactory->createRequest(
@@ -63,10 +65,11 @@ final class CertificadosResource extends BaseResource
     }
 
     /**
-     * Upload a new global CSD certificate.
+     * Upload a new CSD certificate for a child issuer (RFC).
+     * @param string $rfc The child issuer RFC.
      * @param CertificadoCsd $certificadoCsd The CSD data (key, cer, password).
      * @param RequestOptions|null $options
-     * @return array The API response.
+     * @return array The API response (or Certificado if applicable, though typically this returns a status message or similar).
      * @throws ClientExceptionInterface
      * @throws RedirectionExceptionInterface
      * @throws ServerExceptionInterface
@@ -74,9 +77,9 @@ final class CertificadosResource extends BaseResource
      * @throws JsonException
      * @throws Throwable
      */
-    public function create(CertificadoCsd $certificadoCsd, ?RequestOptions $options = null): array
+    public function create(string $rfc, CertificadoCsd $certificadoCsd, ?RequestOptions $options = null): array
     {
-        $path = '/certificados';
+        $path = sprintf('/emisores-hijos/%s/certificados', $rfc);
         
         $request = $this->requestFactory->createRequest(
             uri: $path,

@@ -9,6 +9,7 @@ use Csfacturacion\CsPlug\Util\HttpClient;
 use Csfacturacion\CsPlug\Util\RequestFactory;
 use Csfacturacion\CsPlug\Resources\EmisoresHijosResource;
 use Csfacturacion\CsPlug\Resources\CertificadosResource;
+use Csfacturacion\CsPlug\Resources\CertificadosEmisorHijoResource;
 use Csfacturacion\CsPlug\Resources\SeriesResource;
 use Csfacturacion\CsPlug\Resources\SeriesEmisorHijoResource;
 use Csfacturacion\CsPlug\Resources\PlantillasResource;
@@ -41,6 +42,11 @@ final class CsPlugClient
     public function certificados(): CertificadosResource
     {
         return new CertificadosResource($this->client, $this->requestFactory, $this->config);
+    }
+
+    public function certificadosEmisorHijo(): CertificadosEmisorHijoResource
+    {
+        return new CertificadosEmisorHijoResource($this->client, $this->requestFactory, $this->config);
     }
 
     public function plantillas(): PlantillasResource
