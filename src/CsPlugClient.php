@@ -52,4 +52,9 @@ final class CsPlugClient
     {
         return new SeriesEmisorHijoResource($this->client, $this->requestFactory, $this->config);
     }
+
+    public function series(): SeriesResource
+    {
+        return new SeriesResource($this->client, $this->requestFactory, $this->config);
+    }
 }

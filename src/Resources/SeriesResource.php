@@ -27,18 +27,24 @@ final class SeriesResource extends BaseResource
      * @throws ClientExceptionInterface
      * @throws \JsonException
      */
-    public function list(int $page = 1, ?RequestOptions $options = null): PaginatedResponse
+    public function list(?RequestOptions $options = null): PaginatedResponse
     {
-        $path = sprintf('/series?page=%d', $page);
-        $request = $this->requestFactory->createRequest('GET', $path, $options);
+        $path = '/series';
+        $queryParams = $options?->getQuery() ?? [];
+
+        $request = $this->requestFactory->createRequest(
+            uri: $path, 
+            queryParams: $queryParams,
+            options: $options
+        );
         $response = $this->client->send($request);
 
         $this->handleResponse($response);
 
-        $body = $response->toArray();
+        $body = $response->bodyAsArray();
         
         $items = array_map(
-            fn($item) => Serie::fromJson(json_encode($item)), 
+            fn($item) => Serie::fromArray($item), 
             $body['data'] ?? []
         );
 
@@ -47,5 +53,23 @@ final class SeriesResource extends BaseResource
             (int) ($body['current_page'] ?? 1),
             (int) ($body['total'] ?? count($items))
         );
+    }
+
+    public function create(Serie $serie, ?RequestOptions $options = null): Serie
+    {
+        $request = $this->requestFactory->createRequest(
+            uri: '/series',
+            body: $serie,
+            method: \Csfacturacion\CsPlug\Model\HttpMethod::POST,
+            options: $options
+        );
+
+        $response = $this->client->send($request);
+        $this->handleResponse($response);
+
+        $body = $response->bodyAsArray();
+        $data = $body['data'] ?? $body;
+        
+        return Serie::fromArray($data);
     }
 }
