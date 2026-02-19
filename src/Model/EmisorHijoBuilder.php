@@ -8,12 +8,16 @@ use LogicException;
  * Builder instance for {@see EmisorHijo}
  *
  */
-class EmisorHijoBuilder implements Builder
+class EmisorHijoBuilder extends Builder
 {
     private ?Rfc $rfc;
     private ?string $razonSocial;
     private ?string $domicilioFiscal;
     private ?EmisorHijoConfiguracion $configuracion;
+
+    protected array $requiredFields = [
+        'rfc', 'razonSocial', 'domicilioFiscal'
+    ];
 
     public function withRfc(Rfc $rfc): self
     {
@@ -41,15 +45,7 @@ class EmisorHijoBuilder implements Builder
 
     public function validate(): void
     {
-        $requiredFields = [
-            'rfc', 'razonSocial', 'domicilioFiscal'
-        ];
-
-        foreach ($requiredFields as $field) {
-            if ($this->$field === null || $this->$field === '') {
-                throw new LogicException("$field no puede ser null o vacio!");
-            }
-        }
+        parent::validate();
     }
 
     public function build(): EmisorHijo{

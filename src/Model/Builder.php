@@ -2,8 +2,16 @@
 
 namespace Csfacturacion\CsPlug\Model;
 
-interface Builder
+abstract class Builder
 {
-    public function validate();
-    public function build();
+    private array $requiredFields = [];
+    
+    public function validate(){
+        foreach ($this->requiredFields as $field) {
+            if ($this->$field === null || $this->$field === '') {
+                throw new LogicException("$field no puede ser null o vacio!");
+            }
+        }
+    }
+    abstract public function build();
 }
