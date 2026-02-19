@@ -37,4 +37,40 @@ final class RequestOptions
     {
         return $this->query ?? null;
     }
+
+    public function addHeader(string $key, string $value): self
+    {
+        $newHeaders = $this->headers;
+        $newHeaders[$key] = $value;
+
+        return new self(
+            contractId: $this->contractId,
+            xServicio: $this->xServicio,
+            headers: $newHeaders,
+            query: $this->query,
+        );
+    }
+
+    public function addQueryParam(string $key, mixed $value): self
+    {
+        $newQuery = $this->query ?? [];
+        $newQuery[$key] = $value;
+
+        return new self(
+            contractId: $this->contractId,
+            xServicio: $this->xServicio,
+            headers: $this->headers,
+            query: $newQuery,
+        );
+    }
+
+    public static function fromArray(array $options): self
+    {
+        return new self(
+            contractId: $options['contract_id'] ?? null,
+            xServicio: isset($options['x_servicio']) ? Service::from($options['x_servicio']) : null,
+            headers: $options['headers'] ?? [],
+            query: $options['query'] ?? null,
+        );
+    }
 }
