@@ -25,7 +25,7 @@ class CfdiResource extends BaseResource
      * @throws RedirectionExceptionInterface
      * @throws ClientExceptionInterface
      */
-    public function timbrar(array $comprobante, ?RequestOptions $options): Cfdi
+    public function timbrar(array $comprobante, ?RequestOptions $options = null): Cfdi
     {
         $request = $this->requestFactory->createRequest(
             uri: self::ENDPOINT,
@@ -51,7 +51,7 @@ class CfdiResource extends BaseResource
      * @throws RedirectionExceptionInterface
      * @throws ClientExceptionInterface
      */
-    public function demo(array $comprobante, ?RequestOptions $options): Cfdi
+    public function demo(array $comprobante, ?RequestOptions $options = null): Cfdi
     {
         $request = $this->requestFactory->createRequest(
             uri: "/demo" . self::ENDPOINT,
@@ -77,7 +77,7 @@ class CfdiResource extends BaseResource
      * @throws RedirectionExceptionInterface
      * @throws ClientExceptionInterface
      */
-    public function show(string $uuid, ?RequestOptions $options): Cfdi
+    public function show(string $uuid, ?RequestOptions $options = null): Cfdi
     {
         $request = $this->requestFactory->createRequest(
             uri: self::ENDPOINT . '/' . $uuid,
@@ -91,6 +91,6 @@ class CfdiResource extends BaseResource
         $body = $response->bodyAsArray();
         $data = $body['data'] ?? $body;
 
-        return Cfdi::fromList($data);
+        return Cfdi::fromTimbre($data);
     }
 }
