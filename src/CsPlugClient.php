@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Csfacturacion\CsPlug;
 
 use Csfacturacion\CsPlug\Model\CsPlugConfig;
+use Csfacturacion\CsPlug\Resources\CfdiResource;
 use Csfacturacion\CsPlug\Util\HttpClient;
 use Csfacturacion\CsPlug\Util\RequestFactory;
 use Csfacturacion\CsPlug\Resources\EmisoresHijosResource;
@@ -62,5 +63,9 @@ final class CsPlugClient
     public function series(): SeriesResource
     {
         return new SeriesResource($this->client, $this->requestFactory, $this->config);
+    }
+
+    public function cfdi(): CfdiResource{
+        return new CfdiResource($this->client, $this->requestFactory, $this->config);
     }
 }
