@@ -5,59 +5,102 @@ namespace Csfacturacion\CsPlug\Model;
 
 class Cfdi
 {
-    const TIPO_LIST = 'list';
-    const TIPO_TIMBRE = 'timbre';
+    private const TIPO_LIST = 'list';
+    private const TIPO_TIMBRE = 'timbre';
+
     public function __construct(
-        readonly private string  $uuid,
+        readonly private string $uuid,
         readonly private ?string $serie,
-        readonly private string  $folio,
-        readonly private string  $fecha,
-        readonly private float   $subTotal,
-        readonly private float   $total,
-        readonly private ?float  $descuento = null,
+        readonly private string $folio,
+        readonly private string $fecha,
+        readonly private float $subTotal,
+        readonly private float $total,
+        readonly private string $procedencia,
+        readonly private ?float $descuento = null,
         readonly private ?string $estatus = null,
         readonly private ?string $xmlBase64 = null,
         readonly private ?string $pdfBase64 = null,
         readonly private ?string $qrBase64 = null,
-        readonly private string  $procedencia
-    ){}
+    ) {
+    }
 
-    private static function fromArray(array $data): self{
+    /**
+     * @param array{
+     *     uuid: string,
+     *     serie?: string,
+     *     fecha?: string,
+     *     folio: string,
+     *     procedencia: string,
+     *     subTotal?: float,
+     *     descuento?: float,
+     *     total?: float,
+     *     estatus?: string,
+     *     xmlBase64?: string,
+     *     pdfBase64?: string,
+     *     qrBase64?: string,
+     * } $data
+     */
+    private static function fromArray(array $data): self
+    {
         return new self(
-            uuid:           $data['uuid'],
-            serie:          $data['serie'] ?? null,
-            folio:          $data['folio'],
-            fecha:          $data['fecha'] ?? '',
-            subTotal:       (float) ($data['subTotal'] ?? 0),
-            total:          (float) ($data['total'] ?? 0),
-            descuento:      isset($data['descuento']) ? (float) $data['descuento'] : null,
-            estatus:        $data['estatus'] ?? null,
-            xmlBase64:      $data['xmlBase64'] ?? null,
-            pdfBase64:      $data['pdfBase64'] ?? null,
-            qrBase64:       $data['qrBase64'] ?? null,
-            procedencia:    $data['procedencia']
+            uuid: $data['uuid'],
+            serie: $data['serie'] ?? null,
+            folio: $data['folio'],
+            fecha: $data['fecha'] ?? '',
+            subTotal: (float) ($data['subTotal'] ?? 0),
+            total: (float) ($data['total'] ?? 0),
+            procedencia: $data['procedencia'],
+            descuento: isset($data['descuento']) ? (float) $data['descuento'] : null,
+            estatus: $data['estatus'] ?? null,
+            xmlBase64: $data['xmlBase64'] ?? null,
+            pdfBase64: $data['pdfBase64'] ?? null,
+            qrBase64: $data['qrBase64'] ?? null,
         );
     }
 
-    public static function fromTimbre(array $data): self{
+    /**
+     * @param array{
+     *     cfdi: array{
+     *     uuid: string,
+     *     serie: string,
+     *     fecha: string,
+     *     folio: string,
+     *     subTotal: float,
+     *     descuento: float,
+     *     total: float,
+     *     },
+     *     xml: string,
+     *     pdf: string,
+     *     qr: string,
+     * } $data
+     */
+    public static function fromTimbre(array $data): self
+    {
         return self::fromArray([
-            'uuid' =>       $data['cfdi']['uuid'],
-            'serie' =>      $data['cfdi']['serie'],
-            'folio' =>      $data['cfdi']['folio'],
-            'fecha' =>      $data['cfdi']['fecha'],
-            'subTotal' =>   (float) ($data['subTotal'] ?? 0),
-            'total' =>      (float) ($data['total'] ?? 0),
-            'descuento' =>  isset($data['descuento']) ? (float) $data['descuento'] : null,
-            'xmlBase64' =>  $data['xml'],
-            'pdfBase64' =>  $data['pdf'],
-            'qrBase64' =>   $data['qr'],
-            'procedencia'=> self::TIPO_TIMBRE
+            'uuid' => (string) ($data['cfdi']['uuid']),
+            'serie' => (string) $data['cfdi']['serie'],
+            'folio' => (string) $data['cfdi']['folio'],
+            'fecha' => (string) $data['cfdi']['fecha'],
+            'subTotal' => (float) ($data['cfdi']['subTotal'] ?? 0),
+            'total' => (float) ($data['cfdi']['total'] ?? 0),
+            'descuento' => (float) ($data['cfdi']['descuento'] ?? 0),
+            'xmlBase64' => (string) $data['xml'],
+            'pdfBase64' => (string) $data['pdf'],
+            'qrBase64' => (string) $data['qr'],
+            'procedencia' => self::TIPO_TIMBRE,
         ]);
     }
 
-    public static function fromList(array $data): self{
+    /*
+     * todo: se aplicara en futuras actualizaciones
+     * */
+
+    /*
+    public static function fromList(array $data): self
+    {
         return self::fromArray([...$data, 'procedencia' => self::TIPO_LIST]);
     }
+    */
 
     public function getUuid(): string
     {
