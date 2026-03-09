@@ -12,22 +12,24 @@ use Csfacturacion\CsPlug\Resources\PlantillasResource;
 use Csfacturacion\CsPlug\Resources\SeriesEmisorHijoResource;
 use Csfacturacion\CsPlug\Resources\SeriesResource;
 use Illuminate\Support\Facades\Facade;
+use Override;
 
 /**
+ * @see \Csfacturacion\CsPlug\CsPlugClient
+ *
  * @method static EmisoresHijosResource emisoresHijos()
  * @method static CertificadosResource certificados()
  * @method static CertificadosEmisorHijoResource certificadosEmisorHijo()
  * @method static PlantillasResource plantillas()
  * @method static SeriesEmisorHijoResource seriesEmisorHijo()
  * @method static SeriesResource series()
- * 
- * @see \Csfacturacion\CsPlug\CsPlugClient
  */
 final class CsPlug extends Facade
 {
     /**
      * @return string
      */
+    #[Override]
     protected static function getFacadeAccessor()
     {
         return CsPlugClient::class;

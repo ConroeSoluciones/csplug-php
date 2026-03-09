@@ -7,12 +7,20 @@ namespace Csfacturacion\CsPlug\Model;
 use Csfacturacion\CsPlug\Util\Deserializable;
 use JsonException;
 use RuntimeException;
+
+use function json_decode;
+
+use const JSON_THROW_ON_ERROR;
+
 final class HttpResponse
 {
+    /**
+     * @param array<string, string|string[]> $headers
+     */
     public function __construct(
         private readonly string $rawResponse,
         private readonly int $code,
-        private readonly array $headers = []
+        private readonly array $headers = [],
     ) {
     }
 
@@ -31,6 +39,9 @@ final class HttpResponse
         return $this->code;
     }
 
+    /**
+     * @return array<string, string|string[]>
+     */
     public function getHeaders(): array
     {
         return $this->headers;
@@ -53,11 +64,17 @@ final class HttpResponse
         return $model;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     // phpcs:ignore SlevomatCodingStandard.TypeHints.ReturnTypeHint
-    public function bodyAsArray(): array // @phpstan-ignore missingType.iterableValue
+    public function bodyAsArray(): array
     {
         try {
-            return (array) json_decode($this->rawResponse, true, 512, JSON_THROW_ON_ERROR);
+            /** @var array<string, mixed> $result */
+            $result = (array) json_decode($this->rawResponse, true, 512, JSON_THROW_ON_ERROR);
+
+            return $result;
         } catch (JsonException $e) {
             throw new RuntimeException($e->getMessage());
         }

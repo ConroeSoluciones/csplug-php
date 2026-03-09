@@ -4,59 +4,58 @@ declare(strict_types=1);
 
 namespace Csfacturacion\CsPlug\Util;
 
+use Csfacturacion\CsPlug\Model\AuthMode;
 use Csfacturacion\CsPlug\Model\CsPlugConfig;
 use Csfacturacion\CsPlug\Model\HttpMethod;
 use Csfacturacion\CsPlug\Model\HttpRequest;
 use Csfacturacion\CsPlug\Model\RequestOptions;
-use Csfacturacion\CsPlug\Model\AuthMode;
 use JsonSerializable;
-use RuntimeException;
 
-class RequestFactory
+use function base64_encode;
+use function http_build_query;
+
+final readonly class RequestFactory
 {
     public function __construct(
-        private readonly CsPlugConfig $config
+        private CsPlugConfig $config,
     ) {
     }
 
     /**
-     * @param string $uri
-     * @param array $queryParams
-     * @param JsonSerializable|array|null $body
-     * @param HttpMethod $method
-     * @param RequestOptions|null $options
-     * @return HttpRequest
+     * @param array<mixed> $queryParams
+     * @param JsonSerializable|array<string, mixed>|null $body
      */
     public function createRequest(
         string $uri,
         array $queryParams = [],
-        JsonSerializable|array|null $body = null,
+        JsonSerializable | array | null $body = null,
         HttpMethod $method = HttpMethod::GET,
         ?RequestOptions $options = null,
     ): HttpRequest {
-        $xServicio = $options?->getXServicio() ?? $this->config->xServicio;
+        $xServicio = $options?->getXServicio() ?? $this->config->getXServicio();
         $headers = [
             'Content-Type' => 'application/json',
             'Accept' => 'application/json',
             'X-Servicio' => $xServicio->value,
             'Authorization' => $this->resolveAuthorizationToken(),
         ];
-        $xRfc = $options?->getContractId() ?? $this->config->contractId;
 
-        if(empty($xRfc) && $this->config->authMode === AuthMode::BEARER) throw new RuntimeException('No tienes permiso para acceder a este recurso');
-
-        if ($xRfc !== null) {
+        if ($this->config->getAuthMode() === AuthMode::BEARER) {
+            $xRfc = $options?->getContractId() ?? $this->config->getContractId();
             $headers['X-Rfc'] = $xRfc;
         }
 
         if ($options) {
+            /**
+             * @var string|string[] $value
+             */
             foreach ($options->getHeaders() as $key => $value) {
                 $headers[$key] = $value;
             }
         }
 
-        $url = $this->config->baseUri . $uri;
-        if (!empty($queryParams)) {
+        $url = $this->config->getBaseUri() . $uri;
+        if ($queryParams !== []) {
             $url .= '?' . http_build_query($queryParams);
         }
 
@@ -66,17 +65,19 @@ class RequestFactory
             method: $method,
         );
 
-        $req->setHeaders($headers);
+        /** @var array<string, string|string[]> $typedHeaders */
+        $typedHeaders = $headers;
+        $req->setHeaders($typedHeaders);
 
         return $req;
     }
 
     private function resolveAuthorizationToken(): string
     {
-        if ($this->config->authMode === AuthMode::BASIC) {
-            return base64_encode($this->config->username . ':' . $this->config->password);
+        if ($this->config->getAuthMode() === AuthMode::BASIC) {
+            return base64_encode($this->config->getUsername() . ':' . $this->config->getPassword());
         } else {
-            return 'Bearer ' . $this->config->bearerToken;
+            return 'Bearer ' . $this->config->getBearerToken();
         }
     }
 }

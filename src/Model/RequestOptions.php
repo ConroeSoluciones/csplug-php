@@ -28,11 +28,17 @@ final class RequestOptions
         return $this->xServicio;
     }
 
+    /**
+     * @return string[]|string[][]
+     */
     public function getHeaders(): array
     {
         return $this->headers;
     }
 
+    /**
+     * @return array<string, mixed>|null
+     */
     public function getQuery(): ?array
     {
         return $this->query ?? null;
@@ -54,6 +60,7 @@ final class RequestOptions
     public function addQueryParam(string $key, mixed $value): self
     {
         $newQuery = $this->query ?? [];
+        /** @psalm-suppress MixedAssignment */
         $newQuery[$key] = $value;
 
         return new self(
@@ -64,6 +71,14 @@ final class RequestOptions
         );
     }
 
+    /**
+     * @param array{
+     *     contract_id?: string,
+     *     x_servicio?: string,
+     *     headers?: array<string, string>,
+     *     query?: array<string, mixed>
+     * } $options
+     */
     public static function fromArray(array $options): self
     {
         return new self(

@@ -6,6 +6,7 @@ namespace Csfacturacion\CsPlug\Resources;
 
 use Csfacturacion\CsPlug\Model\Cfdi;
 use Csfacturacion\CsPlug\Model\HttpMethod;
+use Csfacturacion\CsPlug\Model\PeticionCancelacion;
 use Csfacturacion\CsPlug\Model\RequestOptions;
 use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
@@ -13,25 +14,28 @@ use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Throwable;
 
-class CfdiResource extends BaseResource
+final class CfdiResource extends BaseResource
 {
     use ResponseHandlerTrait;
+
     private const ENDPOINT = '/cfdi';
 
     /**
+     * @param array<string, mixed> $comprobante
+     *
+     * @throws ClientExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
      * @throws TransportExceptionInterface
      * @throws Throwable
-     * @throws ServerExceptionInterface
-     * @throws RedirectionExceptionInterface
-     * @throws ClientExceptionInterface
-     */
+ */
     public function timbrar(array $comprobante, ?RequestOptions $options = null): Cfdi
     {
         $request = $this->requestFactory->createRequest(
             uri: self::ENDPOINT,
             body: $comprobante,
             method: HttpMethod::POST,
-            options: $options
+            options: $options,
         );
 
         $response = $this->client->send($request);
@@ -39,25 +43,29 @@ class CfdiResource extends BaseResource
         $this->handleResponse($response);
 
         $body = $response->bodyAsArray();
+        /** @var mixed $data */
         $data = $body['data'] ?? $body;
 
-        return Cfdi::fromTimbre($data);
+        /** @psalm-suppress MixedArgument */
+        return Cfdi::fromTimbre($data); // @phpstan-ignore argument.type
     }
 
     /**
-     * @throws TransportExceptionInterface
-     * @throws Throwable
-     * @throws ServerExceptionInterface
-     * @throws RedirectionExceptionInterface
+     * @param array<string, mixed> $comprobante
+     *
      * @throws ClientExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws Throwable
+     * @throws TransportExceptionInterface
      */
     public function demo(array $comprobante, ?RequestOptions $options = null): Cfdi
     {
         $request = $this->requestFactory->createRequest(
-            uri: "/demo" . self::ENDPOINT,
+            uri: '/demo' . self::ENDPOINT,
             body: $comprobante,
             method: HttpMethod::POST,
-            options: $options
+            options: $options,
         );
 
         $response = $this->client->send($request);
@@ -65,9 +73,11 @@ class CfdiResource extends BaseResource
         $this->handleResponse($response);
 
         $body = $response->bodyAsArray();
+        /** @var mixed $data */
         $data = $body['data'] ?? $body;
 
-        return Cfdi::fromTimbre($data);
+        /** @psalm-suppress MixedArgument */
+        return Cfdi::fromTimbre($data); // @phpstan-ignore argument.type
     }
 
     /**
@@ -81,7 +91,7 @@ class CfdiResource extends BaseResource
     {
         $request = $this->requestFactory->createRequest(
             uri: self::ENDPOINT . '/' . $uuid,
-            options: $options
+            options: $options,
         );
 
         $response = $this->client->send($request);
@@ -89,8 +99,28 @@ class CfdiResource extends BaseResource
         $this->handleResponse($response);
 
         $body = $response->bodyAsArray();
+        /** @var mixed $data */
         $data = $body['data'] ?? $body;
 
-        return Cfdi::fromTimbre($data);
+        /** @psalm-suppress MixedArgument */
+        return Cfdi::fromTimbre($data); // @phpstan-ignore argument.type
+    }
+
+    public function cancel(PeticionCancelacion $peticionCancelacion, ?RequestOptions $options = null): mixed
+    {
+        $request = $this->requestFactory->createRequest(
+            uri: self::ENDPOINT . '/cancelar',
+            body: $peticionCancelacion,
+            method: HttpMethod::POST,
+            options: $options,
+        );
+
+        $response = $this->client->send($request);
+
+        $this->handleResponse($response);
+
+        $body = $response->bodyAsArray();
+
+        return $body['data'] ?? $body;
     }
 }

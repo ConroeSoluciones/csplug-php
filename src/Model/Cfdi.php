@@ -1,11 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Csfacturacion\CsPlug\Model;
 
-class Cfdi
+final class Cfdi
 {
-    private const TIPO_LIST = 'list';
+    //private const TIPO_LIST = 'list';
     private const TIPO_TIMBRE = 'timbre';
 
     public function __construct(
@@ -47,10 +48,10 @@ class Cfdi
             serie: $data['serie'] ?? null,
             folio: $data['folio'],
             fecha: $data['fecha'] ?? '',
-            subTotal: (float) ($data['subTotal'] ?? 0),
-            total: (float) ($data['total'] ?? 0),
+            subTotal: $data['subTotal'] ?? 0,
+            total: $data['total'] ?? 0,
             procedencia: $data['procedencia'],
-            descuento: isset($data['descuento']) ? (float) $data['descuento'] : null,
+            descuento: $data['descuento'] ?? null,
             estatus: $data['estatus'] ?? null,
             xmlBase64: $data['xmlBase64'] ?? null,
             pdfBase64: $data['pdfBase64'] ?? null,
@@ -77,16 +78,16 @@ class Cfdi
     public static function fromTimbre(array $data): self
     {
         return self::fromArray([
-            'uuid' => (string) ($data['cfdi']['uuid']),
-            'serie' => (string) $data['cfdi']['serie'],
-            'folio' => (string) $data['cfdi']['folio'],
-            'fecha' => (string) $data['cfdi']['fecha'],
+            'uuid' => $data['cfdi']['uuid'],
+            'serie' => $data['cfdi']['serie'],
+            'folio' => $data['cfdi']['folio'],
+            'fecha' => $data['cfdi']['fecha'],
             'subTotal' => (float) ($data['cfdi']['subTotal'] ?? 0),
             'total' => (float) ($data['cfdi']['total'] ?? 0),
             'descuento' => (float) ($data['cfdi']['descuento'] ?? 0),
-            'xmlBase64' => (string) $data['xml'],
-            'pdfBase64' => (string) $data['pdf'],
-            'qrBase64' => (string) $data['qr'],
+            'xmlBase64' => $data['xml'],
+            'pdfBase64' => $data['pdf'],
+            'qrBase64' => $data['qr'],
             'procedencia' => self::TIPO_TIMBRE,
         ]);
     }

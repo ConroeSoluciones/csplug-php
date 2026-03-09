@@ -1,63 +1,83 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Csfacturacion\CsPlug\Model;
 
 use LogicException;
+use Override;
 
 /**
  * Builder instance for {@see CertificadoCsd}
  */
-class CertificadoCsdBuilder extends Builder
+final class CertificadoCsdBuilder extends Builder
 {
-    private ?string $cer;
-    private ?string $key;
-    private ?string $password;
+    private ?string $cer = null;
+    private ?string $key = null;
+    private ?string $password = null;
 
-    protected array $requiredFields = [
-        'cer', 'key', 'password'
-    ];
+    /** @var string[] */
+    protected array $requiredFields = ['cer', 'key', 'password'];
 
     public function withCer(string $cer): self
     {
         $this->cer = $cer;
+
         return $this;
     }
 
     public function withKey(string $key): self
     {
         $this->key = $key;
+
         return $this;
     }
 
     public function withPassword(string $password): self
     {
         $this->password = $password;
+
         return $this;
     }
 
+    #[Override]
     public function validate(): void
     {
         parent::validate();
     }
 
-    public function build(): CertificadoCsd{
+    #[Override]
+    public function build(): Buildable
+    {
         $this->validate();
+
         return new CertificadoCsd($this);
     }
 
     public function getCer(): string
     {
+        if ($this->cer === null) {
+            throw new LogicException('El atributo no ha sido inicializado');
+        }
+
         return $this->cer;
     }
 
     public function getKey(): string
     {
+        if ($this->key === null) {
+            throw new LogicException('El atributo no ha sido inicializado');
+        }
+
         return $this->key;
     }
 
     public function getPassword(): string
     {
+        if ($this->password === null) {
+            throw new LogicException('El atributo no ha sido inicializado');
+        }
+
         return $this->password;
     }
 }

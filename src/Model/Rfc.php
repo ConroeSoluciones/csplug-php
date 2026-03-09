@@ -1,11 +1,16 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Csfacturacion\CsPlug\Model;
 
 use InvalidArgumentException;
+use JsonSerializable;
+use Override;
 
-class Rfc implements \JsonSerializable
+use function preg_match;
+
+final class Rfc implements JsonSerializable
 {
     public function __construct(private readonly string $value)
     {
@@ -29,6 +34,7 @@ class Rfc implements \JsonSerializable
         return $this->value;
     }
 
+    #[Override]
     public function jsonSerialize(): string
     {
         return $this->value;

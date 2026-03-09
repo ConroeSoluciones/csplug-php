@@ -1,77 +1,235 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Csfacturacion\CsPlug\Model;
 
-class SerieBuilder
+use Override;
+
+/**
+ * Builder instance for {@see Serie}
+ */
+final class SerieBuilder extends Builder
 {
-    private string $serie;
-    private int $rangoInicial;
-    private int $cantidadDecimales = 2;
-    private string $tipoComprobante = 'INGRESO';
-    private string $tipoDocumento = 'CFDI';
+    private ?int $idSerie = null;
+    private ?string $serie = null;
+    private ?int $rangoInicial = null;
+    private ?string $fecha = null;
+    private ?int $decimales = null;
+    private ?string $rfcEmisor = null;
+    private ?string $tipoComprobante = null;
+    private ?string $tipoDocumento = null;
+    private ?int $idEmisor = null;
+    private ?int $idPlantilla = null;
     private ?string $logo = null;
-    private ?int $plantillaId = null;
+    private ?string $config = null;
+    private ?int $estatus = null;
+    private ?int $version = null;
+    private ?string $estiloConceptos = null;
+    private ?string $estiloTotales = null;
+
+    /** @var string[] */
+    protected array $requiredFields = [
+        'serie', 'rangoInicial', 'decimales', 'tipoComprobante', 'tipoDocumento',
+    ];
+
+    public function withIdSerie(int $idSerie): self
+    {
+        $this->idSerie = $idSerie;
+
+        return $this;
+    }
 
     public function withSerie(string $serie): self
     {
         $this->serie = $serie;
+
         return $this;
     }
 
     public function withRangoInicial(int $rangoInicial): self
     {
         $this->rangoInicial = $rangoInicial;
+
         return $this;
     }
 
-    public function withCantidadDecimales(int $cantidadDecimales): self
+    public function withFecha(string $fecha): self
     {
-        $this->cantidadDecimales = $cantidadDecimales;
+        $this->fecha = $fecha;
+
+        return $this;
+    }
+
+    public function withDecimales(int $decimales): self
+    {
+        $this->decimales = $decimales;
+
+        return $this;
+    }
+
+    public function withRfcEmisor(string $rfcEmisor): self
+    {
+        $this->rfcEmisor = $rfcEmisor;
+
         return $this;
     }
 
     public function withTipoComprobante(string $tipoComprobante): self
     {
         $this->tipoComprobante = $tipoComprobante;
+
         return $this;
     }
 
     public function withTipoDocumento(string $tipoDocumento): self
     {
         $this->tipoDocumento = $tipoDocumento;
+
+        return $this;
+    }
+
+    public function withIdEmisor(int $idEmisor): self
+    {
+        $this->idEmisor = $idEmisor;
+
+        return $this;
+    }
+
+    public function withPlantilla(int $idPlantilla): self
+    {
+        $this->idPlantilla = $idPlantilla;
+
         return $this;
     }
 
     public function withLogo(string $logo): self
     {
         $this->logo = $logo;
+
         return $this;
     }
 
-    public function withPlantillaId(int $plantillaId): self
+    public function withConfig(string $config): self
     {
-        $this->plantillaId = $plantillaId;
+        $this->config = $config;
+
         return $this;
     }
 
-    public function build(): Serie
+    public function withEstatus(int $estatus): self
     {
-        if (!isset($this->serie)) {
-             throw new \RuntimeException('La serie es requerida.');
-        }
-        if (!isset($this->rangoInicial)) {
-             throw new \RuntimeException('El rango inicial es requerido.');
-        }
+        $this->estatus = $estatus;
 
-        return new Serie(
-            serie: $this->serie,
-            rangoInicial: $this->rangoInicial,
-            decimales: $this->cantidadDecimales,
-            tipoComprobante: $this->tipoComprobante,
-            tipoDocumento: $this->tipoDocumento,
-            logo: $this->logo,
-            plantillaId: $this->plantillaId
-        );
+        return $this;
+    }
+
+    public function withVersion(int $version): self
+    {
+        $this->version = $version;
+
+        return $this;
+    }
+
+    public function withEstiloConceptos(string $estiloConceptos): self
+    {
+        $this->estiloConceptos = $estiloConceptos;
+
+        return $this;
+    }
+
+    public function withEstiloTotales(string $estiloTotales): self
+    {
+        $this->estiloTotales = $estiloTotales;
+
+        return $this;
+    }
+
+    #[Override]
+    public function build(): Buildable
+    {
+        $this->validate();
+
+        return new Serie($this);
+    }
+
+    public function getIdSerie(): ?int
+    {
+        return $this->idSerie;
+    }
+
+    public function getSerie(): ?string
+    {
+        return $this->serie;
+    }
+
+    public function getRangoInicial(): ?int
+    {
+        return $this->rangoInicial;
+    }
+
+    public function getFecha(): ?string
+    {
+        return $this->fecha;
+    }
+
+    public function getDecimales(): ?int
+    {
+        return $this->decimales;
+    }
+
+    public function getRfcEmisor(): ?string
+    {
+        return $this->rfcEmisor;
+    }
+
+    public function getTipoComprobante(): ?string
+    {
+        return $this->tipoComprobante;
+    }
+
+    public function getTipoDocumento(): ?string
+    {
+        return $this->tipoDocumento;
+    }
+
+    public function getIdEmisor(): ?int
+    {
+        return $this->idEmisor;
+    }
+
+    public function getIdPlantilla(): ?int
+    {
+        return $this->idPlantilla;
+    }
+
+    public function getLogo(): ?string
+    {
+        return $this->logo;
+    }
+
+    public function getConfig(): ?string
+    {
+        return $this->config;
+    }
+
+    public function getEstatus(): ?int
+    {
+        return $this->estatus;
+    }
+
+    public function getVersion(): ?int
+    {
+        return $this->version;
+    }
+
+    public function getEstiloConceptos(): ?string
+    {
+        return $this->estiloConceptos;
+    }
+
+    public function getEstiloTotales(): ?string
+    {
+        return $this->estiloTotales;
     }
 }

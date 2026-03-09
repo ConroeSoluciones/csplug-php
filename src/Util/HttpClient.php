@@ -16,14 +16,16 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Throwable;
 
-class HttpClient
+use function sprintf;
+
+final class HttpClient
 {
     private HttpClientInterface $client;
     private LoggerInterface $logger;
 
     public function __construct(
         ?HttpClientInterface $client = null,
-        ?LoggerInterface $logger = null
+        ?LoggerInterface $logger = null,
     ) {
         $this->client = $client ?? SymfonyHttpClient::create();
         $this->logger = $logger ?? new NullLogger();
@@ -41,23 +43,23 @@ class HttpClient
         $this->logger->info(sprintf('Sending %s request to %s', $request->getHttpMethod()->name, $request->getUrl()));
 
         $options = [
-            "headers" => $request->getHeaders(),
+            'headers' => $request->getHeaders(),
         ];
 
-        if($request->getBody()) {
+        if ($request->getBody() !== null) {
             $options['json'] = $request->getBody();
         }
 
         $response = $this->client->request(
             $request->getHttpMethod()->name,
             $request->getUrl(),
-            $options
+            $options,
         );
 
         return new HttpResponse(
             $response->getContent(false),
             $response->getStatusCode(),
-            $response->getHeaders(false)
+            $response->getHeaders(false),
         );
     }
 }

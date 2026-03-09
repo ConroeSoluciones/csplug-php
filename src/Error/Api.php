@@ -4,13 +4,18 @@ declare(strict_types=1);
 
 namespace Csfacturacion\CsPlug\Error;
 
-class ApiException extends CsPlugError
+use Throwable;
+
+class Api extends CsPlugError
 {
+    /**
+     * @param array<mixed>|null $responseBody
+     */
     public function __construct(
         string $message,
         int $code = 0,
-        ?\Throwable $previous = null,
-        public ?array $responseBody = null
+        ?Throwable $previous = null,
+        public ?array $responseBody = null,
     ) {
         parent::__construct($message, $code, $previous);
     }

@@ -4,6 +4,6 @@ declare(strict_types=1);
 
 namespace Csfacturacion\CsPlug\Error;
 
-class UnauthorizedException extends ApiException
+final class Unauthorized extends Api
 {
 }

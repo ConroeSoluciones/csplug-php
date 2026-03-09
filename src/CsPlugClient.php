@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace Csfacturacion\CsPlug;
 
 use Csfacturacion\CsPlug\Model\CsPlugConfig;
+use Csfacturacion\CsPlug\Resources\CertificadosEmisorHijoResource;
+use Csfacturacion\CsPlug\Resources\CertificadosResource;
 use Csfacturacion\CsPlug\Resources\CfdiResource;
+use Csfacturacion\CsPlug\Resources\EmisoresHijosResource;
+use Csfacturacion\CsPlug\Resources\PlantillasResource;
+use Csfacturacion\CsPlug\Resources\SeriesEmisorHijoResource;
+use Csfacturacion\CsPlug\Resources\SeriesResource;
 use Csfacturacion\CsPlug\Util\HttpClient;
 use Csfacturacion\CsPlug\Util\RequestFactory;
-use Csfacturacion\CsPlug\Resources\EmisoresHijosResource;
-use Csfacturacion\CsPlug\Resources\CertificadosResource;
-use Csfacturacion\CsPlug\Resources\CertificadosEmisorHijoResource;
-use Csfacturacion\CsPlug\Resources\SeriesResource;
-use Csfacturacion\CsPlug\Resources\SeriesEmisorHijoResource;
-use Csfacturacion\CsPlug\Resources\PlantillasResource;
 
 final class CsPlugClient
 {
@@ -21,7 +21,7 @@ final class CsPlugClient
     private RequestFactory $requestFactory;
 
     public function __construct(
-        private readonly CsPlugConfig $config
+        private readonly CsPlugConfig $config,
     ) {
         $this->client = new HttpClient();
         $this->requestFactory = new RequestFactory($config);
@@ -65,7 +65,8 @@ final class CsPlugClient
         return new SeriesResource($this->client, $this->requestFactory, $this->config);
     }
 
-    public function cfdi(): CfdiResource{
+    public function cfdi(): CfdiResource
+    {
         return new CfdiResource($this->client, $this->requestFactory, $this->config);
     }
 }

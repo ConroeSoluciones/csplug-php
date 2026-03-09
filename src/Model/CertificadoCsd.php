@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Csfacturacion\CsPlug\Model;
 
-final class CertificadoCsd implements \JsonSerializable
+use JsonSerializable;
+use Override;
+
+final class CertificadoCsd implements Buildable, JsonSerializable
 {
     private string $cer;
     private string $key;
@@ -32,9 +35,19 @@ final class CertificadoCsd implements \JsonSerializable
         return $this->password;
     }
 
+    public static function builder(): CertificadoCsdBuilder
+    {
+        return new CertificadoCsdBuilder();
+    }
+
+    /**
+     * Serialize the object to a value that can be serialized natively by json_encode().
+     *
+     * @return string[]
+     */
+    #[Override]
     public function jsonSerialize(): array
     {
-        // Serialization casing matches requirement: key, cer, password (based on typical JSON API needs, user provided example was lowercase)
         return [
             'cer' => $this->getCer(),
             'key' => $this->getKey(),

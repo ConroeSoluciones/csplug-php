@@ -1,23 +1,27 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Csfacturacion\CsPlug\Model;
 
 use Csfacturacion\CsPlug\Util\Deserializable;
+use JsonSerializable;
+use Override;
+use RuntimeException;
 
-final class EmisorHijoConfiguracion implements Deserializable, \JsonSerializable
+final readonly class EmisorHijoConfiguracion implements Buildable, Deserializable, JsonSerializable
 {
     public function __construct(
-        private readonly ?string $calle = null,
-        private readonly ?string $numero_exterior = null,
-        private readonly ?string $numero_interior = null,
-        private readonly ?string $colonia = null,
-        private readonly ?string $localidad = null,
-        private readonly ?string $municipio = null,
-        private readonly ?string $estado = null,
-        private readonly ?string $pais = null,
-    )
-    {}
+        private ?string $calle = null,
+        private ?string $numeroExterior = null,
+        private ?string $numeroInterior = null,
+        private ?string $colonia = null,
+        private ?string $localidad = null,
+        private ?string $municipio = null,
+        private ?string $estado = null,
+        private ?string $pais = null,
+    ) {
+    }
 
     public function getCalle(): ?string
     {
@@ -26,12 +30,12 @@ final class EmisorHijoConfiguracion implements Deserializable, \JsonSerializable
 
     public function getNumeroExterior(): ?string
     {
-        return $this->numero_exterior;
+        return $this->numeroExterior;
     }
 
     public function getNumeroInterior(): ?string
     {
-        return $this->numero_interior;
+        return $this->numeroInterior;
     }
 
     public function getColonia(): ?string
@@ -59,16 +63,23 @@ final class EmisorHijoConfiguracion implements Deserializable, \JsonSerializable
         return $this->pais;
     }
 
-    public static function fromJson(string $json): Deserializable
+    #[Override]
+    public static function fromJson(string $raw): Deserializable
     {
-
+        throw new RuntimeException('Not implemented: use EmisorHijo::fromJson() instead.');
     }
 
-    public function toArray():array{
+    /**
+     * @return (string|null)[]
+     *
+     * @psalm-return array{calle: string|null, numero_exterior: string|null, numero_interior: string|null, colonia: string|null, localidad: string|null, municipio: string|null, estado: string|null, pais: string|null}
+     */
+    public function toArray(): array
+    {
         return [
             'calle' => $this->calle,
-            'numero_exterior' => $this->numero_exterior,
-            'numero_interior' => $this->numero_interior,
+            'numero_exterior' => $this->numeroExterior,
+            'numero_interior' => $this->numeroInterior,
             'colonia' => $this->colonia,
             'localidad' => $this->localidad,
             'municipio' => $this->municipio,
@@ -77,12 +88,18 @@ final class EmisorHijoConfiguracion implements Deserializable, \JsonSerializable
         ];
     }
 
+    /**
+     * @return (string|null)[]
+     *
+     * @psalm-return array{calle: string|null, numero_exterior: string|null, numero_interior: string|null, colonia: string|null, localidad: string|null, municipio: string|null, estado: string|null, pais: string|null}
+     */
+    #[Override]
     public function jsonSerialize(): array
     {
         return [
             'calle' => $this->calle,
-            'numero_exterior' => $this->numero_exterior,
-            'numero_interior' => $this->numero_interior,
+            'numero_exterior' => $this->numeroExterior,
+            'numero_interior' => $this->numeroInterior,
             'colonia' => $this->colonia,
             'localidad' => $this->localidad,
             'municipio' => $this->municipio,
