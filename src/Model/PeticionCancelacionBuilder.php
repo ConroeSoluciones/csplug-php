@@ -12,14 +12,14 @@ use function preg_match;
 
 final class PeticionCancelacionBuilder extends Builder
 {
-    private ?string $uuid = null;
-    private ?string $motivo = null;
-    private ?string $rfcEmisor = null;
-    private ?string $rfcReceptor = null;
-    private ?string $emailEmisor = null;
-    private ?string $emailReceptor = null;
-    private ?string $folioSustitucion = null;
-    private ?string $contractId = null;
+    protected ?string $uuid = null;
+    protected ?string $motivo = null;
+    protected ?string $rfcEmisor = null;
+    protected ?string $rfcReceptor = null;
+    protected ?string $emailEmisor = null;
+    protected ?string $emailReceptor = null;
+    protected ?string $folioSustitucion = null;
+    protected ?string $contractId = null;
 
     /** @var string[] */
     protected array $requiredFields = [

@@ -12,9 +12,9 @@ use Override;
  */
 final class CertificadoCsdBuilder extends Builder
 {
-    private ?string $cer = null;
-    private ?string $key = null;
-    private ?string $password = null;
+    protected ?string $cer = null;
+    protected ?string $key = null;
+    protected ?string $password = null;
 
     /** @var string[] */
     protected array $requiredFields = ['cer', 'key', 'password'];

@@ -15,10 +15,10 @@ use Override;
  */
 final class EmisorHijoBuilder extends Builder
 {
-    private Rfc $rfc;
-    private string $razonSocial;
-    private string $domicilioFiscal;
-    private ?EmisorHijoConfiguracion $configuracion = null;
+    protected Rfc $rfc;
+    protected string $razonSocial;
+    protected string $domicilioFiscal;
+    protected ?EmisorHijoConfiguracion $configuracion = null;
 
     /** @var string[] */
     protected array $requiredFields = ['rfc', 'razonSocial', 'domicilioFiscal'];

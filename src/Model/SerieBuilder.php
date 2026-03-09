@@ -11,22 +11,22 @@ use Override;
  */
 final class SerieBuilder extends Builder
 {
-    private ?int $idSerie = null;
-    private ?string $serie = null;
-    private ?int $rangoInicial = null;
-    private ?string $fecha = null;
-    private ?int $decimales = null;
-    private ?string $rfcEmisor = null;
-    private ?string $tipoComprobante = null;
-    private ?string $tipoDocumento = null;
-    private ?int $idEmisor = null;
-    private ?int $idPlantilla = null;
-    private ?string $logo = null;
-    private ?string $config = null;
-    private ?int $estatus = null;
-    private ?int $version = null;
-    private ?string $estiloConceptos = null;
-    private ?string $estiloTotales = null;
+    protected ?int $idSerie = null;
+    protected ?string $serie = null;
+    protected ?int $rangoInicial = null;
+    protected ?string $fecha = null;
+    protected ?int $decimales = null;
+    protected ?string $rfcEmisor = null;
+    protected ?string $tipoComprobante = null;
+    protected ?string $tipoDocumento = null;
+    protected ?int $idEmisor = null;
+    protected ?int $idPlantilla = null;
+    protected ?string $logo = null;
+    protected ?string $config = null;
+    protected ?int $estatus = null;
+    protected ?int $version = null;
+    protected ?string $estiloConceptos = null;
+    protected ?string $estiloTotales = null;
 
     /** @var string[] */
     protected array $requiredFields = [
