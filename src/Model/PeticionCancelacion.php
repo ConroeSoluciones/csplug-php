@@ -85,8 +85,8 @@ final class PeticionCancelacion implements Buildable, JsonSerializable
         $peticion = [
             'uuid' => $this->getUuid(),
             'motivo' => $this->getMotivo(),
-            'rfcEmisor' => 'REC980827TR6',
-            'rfcReceptor' => 'XAXX010101000',
+            'rfcEmisor' => $this->getRfcEmisor(),
+            'rfcReceptor' => $this->getRfcReceptor(),
         ];
 
         if ($this->getEmailEmisor() !== null) {

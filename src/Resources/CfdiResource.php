@@ -106,10 +106,11 @@ final class CfdiResource extends BaseResource
         return Cfdi::fromTimbre($data); // @phpstan-ignore argument.type
     }
 
-    public function cancel(PeticionCancelacion $peticionCancelacion, ?RequestOptions $options = null): mixed
+    public function cancel(PeticionCancelacion $peticionCancelacion, ?RequestOptions $options = null, bool $isDemo = false): mixed
     {
+        $uri = $isDemo ? '/demo' . self::ENDPOINT . '/cancelar' : self::ENDPOINT . '/cancelar';
         $request = $this->requestFactory->createRequest(
-            uri: self::ENDPOINT . '/cancelar',
+            uri: $uri,
             body: $peticionCancelacion,
             method: HttpMethod::POST,
             options: $options,
