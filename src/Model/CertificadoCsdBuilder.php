@@ -47,7 +47,7 @@ final class CertificadoCsdBuilder extends Builder
     }
 
     #[Override]
-    public function build(): Buildable
+    public function build(): CertificadoCsd
     {
         $this->validate();
 

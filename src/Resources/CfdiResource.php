@@ -106,12 +106,52 @@ final class CfdiResource extends BaseResource
         return Cfdi::fromTimbre($data); // @phpstan-ignore argument.type
     }
 
-    public function cancel(PeticionCancelacion $peticionCancelacion, ?RequestOptions $options = null, bool $isDemo = false): mixed
-    {
+    /**
+     * @throws ClientExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws Throwable
+     * @throws TransportExceptionInterface
+     */
+    public function cancel(
+        PeticionCancelacion $peticionCancelacion,
+        ?RequestOptions $options = null,
+        bool $isDemo = false,
+    ): mixed {
         $uri = $isDemo ? '/demo' . self::ENDPOINT . '/cancelar' : self::ENDPOINT . '/cancelar';
         $request = $this->requestFactory->createRequest(
             uri: $uri,
             body: $peticionCancelacion,
+            method: HttpMethod::POST,
+            options: $options,
+        );
+
+        $response = $this->client->send($request);
+
+        $this->handleResponse($response);
+
+        $body = $response->bodyAsArray();
+
+        return $body['data'] ?? $body;
+    }
+
+    /**
+     * @param string[] $emails
+     *
+     * @throws ClientExceptionInterface
+     * @throws RedirectionExceptionInterface
+     * @throws ServerExceptionInterface
+     * @throws Throwable
+     * @throws TransportExceptionInterface
+     */
+    public function resend(string $uuid, array $emails, ?RequestOptions $options = null): mixed
+    {
+        $uri = self::ENDPOINT . "/{$uuid}}/send";
+        $request = $this->requestFactory->createRequest(
+            uri: $uri,
+            body: [
+                'email' => $emails,
+            ],
             method: HttpMethod::POST,
             options: $options,
         );

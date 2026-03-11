@@ -23,5 +23,5 @@ abstract class Builder
         }
     }
 
-    abstract public function build(): Buildable;
+    abstract public function build(): mixed;
 }
