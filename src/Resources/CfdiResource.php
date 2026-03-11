@@ -146,7 +146,7 @@ final class CfdiResource extends BaseResource
      */
     public function resend(string $uuid, array $emails, ?RequestOptions $options = null): mixed
     {
-        $uri = self::ENDPOINT . "/{$uuid}}/send";
+        $uri = self::ENDPOINT . "/{$uuid}/send";
         $request = $this->requestFactory->createRequest(
             uri: $uri,
             body: [
