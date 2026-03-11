@@ -73,8 +73,9 @@ final readonly class Serie implements Buildable, Deserializable, JsonSerializabl
             $builder->withRfcEmisor((string) $data['RFCEMISOR']); // @phpstan-ignore cast.string
         }
 
-        if (isset($data['TIPOCOMPROBANTE'])) {
-            $builder->withTipoComprobante((string) $data['TIPOCOMPROBANTE']); // @phpstan-ignore cast.string
+        if (isset($data['VERSION'])) {
+            $tipoComprobante = $data['VERSION'] === 2 ? 'CFDI' : 'RETENCION';
+            $builder->withTipoComprobante($tipoComprobante);
         }
 
         if (isset($data['TIPO'])) {
