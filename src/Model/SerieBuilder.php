@@ -146,7 +146,7 @@ final class SerieBuilder extends Builder
     }
 
     #[Override]
-    public function build(): Buildable
+    public function build(): Serie
     {
         $this->validate();
 
