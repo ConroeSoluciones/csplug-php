@@ -23,9 +23,9 @@ final class ExceptionFactory
         }
 
         return match ($response->getCode()) {
-            400 => new Validation($message, 400, null, $body),
             401 => new Unauthorized('Unauthorized: ' . $message, 401, null, $body),
             404 => new NotFound('Not Found: ' . $message, 404, null, $body),
+            422 => new Validation($message, 422, null, $body),
             default => new Api('HTTP Error: ' . $message, $response->getCode(), null, $body),
         };
     }
