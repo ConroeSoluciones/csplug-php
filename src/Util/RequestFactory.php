@@ -36,7 +36,7 @@ final readonly class RequestFactory
         $headers = [
             'Content-Type' => 'application/json',
             'Accept' => 'application/json',
-            'X-Servicio' => $xServicio->value,
+            'Servicio' => $xServicio->value,
             'Authorization' => $this->resolveAuthorizationToken(),
         ];
 
