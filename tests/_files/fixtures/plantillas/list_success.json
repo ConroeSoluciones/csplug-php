@@ -1,0 +1,41 @@
+{
+  "message": "Exito",
+  "data": [
+    {
+      "id_plantilla": 78,
+      "clave_plantilla": "default",
+      "nombre_plantilla": "CFDI (INCLUYE TODOS LOS COMPLEMENTOS)",
+      "descripcion": "FACTURA INGRESO, EGRESO CFDI 4.0 <br>Plantilla general para CFDI 3.3 <br>Tama&ntilde;o logo 150x150",
+      "ruta_plantilla": "../plantillas/plantillaV33.html",
+      "vista_previa": "../plantillas/vistasplantillas/CC-2-AAA010101AAA33-001.jpg",
+      "fecha": "2022-04-07",
+      "tipo": 1,
+      "version": 4,
+      "version_libreria": 1,
+      "status": null,
+      "nombre_service": "default"
+    },
+    {
+      "id_plantilla": 87,
+      "clave_plantilla": "default",
+      "nombre_plantilla": "Retenciones 2.0",
+      "descripcion": "Retenciones 2.0\r\n",
+      "ruta_plantilla": "",
+      "vista_previa": "",
+      "fecha": "2022-08-04",
+      "tipo": 3,
+      "version": 3,
+      "version_libreria": 1,
+      "status": null,
+      "nombre_service": null
+    }
+  ],
+  "pagination": {
+    "current_page": 1,
+    "per_page": 15,
+    "total": 2,
+    "last_page": 1,
+    "next_page_url": null,
+    "prev_page_url": null
+  }
+}

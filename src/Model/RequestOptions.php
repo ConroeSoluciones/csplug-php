@@ -44,6 +44,16 @@ final class RequestOptions
         return $this->query ?? null;
     }
 
+    public function withContractId(string $contractId): self
+    {
+        return new self(
+            contractId: $contractId,
+            xServicio: $this->xServicio,
+            headers: $this->headers,
+            query: $this->query,
+        );
+    }
+
     public function addHeader(string $key, string $value): self
     {
         $newHeaders = $this->headers;

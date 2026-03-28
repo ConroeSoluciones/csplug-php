@@ -1,0 +1,21 @@
+{
+  "message": "Certificado subido correctamente",
+  "data": {
+    "id_cert_sello": 9181,
+    "id_emisor": 660,
+    "cer": "MIIFgzCCA2ug...",
+    "serie_certificado": "30001000000500003362",
+    "inicio_vigencia": "May 15 10:57:57 2023 CST",
+    "fin_vigencia": "May 15 10:57:57 2027 CST",
+    "password_key": "12345678a",
+    "pem": "-----BEGIN PRIVATE KEY-----\n...",
+    "fecha": "2026-03-25",
+    "tipo": 0,
+    "tipo_certificado": 1,
+    "status": null,
+    "url": null,
+    "fecha_inicial": "2023-05-15 10:57:57",
+    "fecha_final": "2027-05-15 10:57:57",
+    "rfc_emisor": "AAA010101AAA"
+  }
+}

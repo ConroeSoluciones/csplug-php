@@ -4,20 +4,14 @@ declare(strict_types=1);
 
 namespace Csfacturacion\CsPlug\Resources;
 
-use Csfacturacion\CsPlug\Model\EmisorHijo;
+use Csfacturacion\CsPlug\DTOs\Requests\EmisorHijoRequestDTO;
+use Csfacturacion\CsPlug\DTOs\Responses\EmisorHijoResponseDTO;
 use Csfacturacion\CsPlug\Model\HttpMethod;
 use Csfacturacion\CsPlug\Model\PaginatedResponse;
 use Csfacturacion\CsPlug\Model\RequestOptions;
-use JsonException;
-use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
-use Throwable;
 
 use function array_key_exists;
 use function array_map;
-use function array_values;
 use function count;
 use function is_array;
 use function is_numeric;
@@ -28,19 +22,14 @@ final class EmisoresHijosResource extends BaseResource
 
     private const ENDPOINT = '/emisores-hijos';
 
-    /**
-     * @throws ClientExceptionInterface
-     * @throws RedirectionExceptionInterface
-     * @throws ServerExceptionInterface
-     * @throws TransportExceptionInterface
-     * @throws JsonException
-     * @throws Throwable
-     */
     public function list(?RequestOptions $options = null): PaginatedResponse
     {
+        /** @var array<string, string> $queryParams */
+        $queryParams = $options?->getQuery() ?? [];
+
         $request = $this->requestFactory->createRequest(
             uri: self::ENDPOINT,
-            queryParams: $options?->getQuery() ?? [],
+            queryParams: $queryParams,
             options: $options,
         );
 
@@ -48,35 +37,32 @@ final class EmisoresHijosResource extends BaseResource
         $this->handleResponse($response);
 
         $body = $response->bodyAsArray();
-        /** @var mixed $rawData */
-        $rawData = $body['data'] ?? [];
-        $dataList = is_array($rawData) ? array_values($rawData) : [];
 
+        /** @var list<EmisorHijoResponseDTO> $items */
         $items = array_map(
             /** @psalm-suppress MixedArgument */
-            static fn (mixed $item): EmisorHijo => EmisorHijo::fromArray($item), // @phpstan-ignore argument.type
-            $dataList,
+            static fn (mixed $item): EmisorHijoResponseDTO => EmisorHijoResponseDTO::fromArray($item), // @phpstan-ignore argument.type
+            (array) ($body['data'] ?? []),
         );
+
+        /** @var array<string, mixed> $pagination */
+        $pagination = $body['pagination'] ?? [];
 
         return new PaginatedResponse(
             $items,
-            is_numeric($body['current_page'] ?? null) ? (int) $body['current_page'] : 1,
-            is_numeric($body['total'] ?? null) ? (int) $body['total'] : count($items),
+            is_numeric($pagination['current_page'] ?? null)
+                ? (int) $pagination['current_page']
+                : 1,
+            is_numeric($pagination['total'] ?? null)
+                ? (int) $pagination['total']
+                : count($items),
         );
     }
 
-    /**
-     * Creates a new EmisorHijo resource.
-     *
-     * @throws ClientExceptionInterface
-     * @throws RedirectionExceptionInterface
-     * @throws ServerExceptionInterface
-     * @throws TransportExceptionInterface
-     * @throws JsonException
-     * @throws Throwable
-     */
-    public function create(EmisorHijo $emisorHijo, ?RequestOptions $options = null): EmisorHijo
-    {
+    public function create(
+        EmisorHijoRequestDTO $emisorHijo,
+        ?RequestOptions $options = null,
+    ): EmisorHijoResponseDTO {
         $request = $this->requestFactory->createRequest(
             uri: self::ENDPOINT,
             body: $emisorHijo,
@@ -93,6 +79,30 @@ final class EmisoresHijosResource extends BaseResource
         /** @var array<string, mixed> $data */
         $data = is_array($rawData) ? $rawData : [];
 
-        return EmisorHijo::fromArray($data);
+        return EmisorHijoResponseDTO::fromArray($data);
+    }
+
+    public function update(
+        string $rfc,
+        EmisorHijoRequestDTO $emisorHijo,
+        ?RequestOptions $options = null,
+    ): EmisorHijoResponseDTO {
+        $request = $this->requestFactory->createRequest(
+            uri: self::ENDPOINT . '/' . $rfc,
+            body: $emisorHijo,
+            method: HttpMethod::PUT,
+            options: $options,
+        );
+
+        $response = $this->client->send($request);
+        $this->handleResponse($response);
+
+        $body = $response->bodyAsArray();
+        /** @var mixed $rawData */
+        $rawData = array_key_exists('data', $body) ? $body['data'] : $body;
+        /** @var array<string, mixed> $data */
+        $data = is_array($rawData) ? $rawData : [];
+
+        return EmisorHijoResponseDTO::fromArray($data);
     }
 }

@@ -4,20 +4,14 @@ declare(strict_types=1);
 
 namespace Csfacturacion\CsPlug\Resources;
 
-use Csfacturacion\CsPlug\Model\Certificado;
-use Csfacturacion\CsPlug\Model\CertificadoCsd;
+use Csfacturacion\CsPlug\DTOs\Requests\CertificadoRequestDTO;
+use Csfacturacion\CsPlug\DTOs\Responses\CertificadoResponseDTO;
 use Csfacturacion\CsPlug\Model\HttpMethod;
 use Csfacturacion\CsPlug\Model\PaginatedResponse;
 use Csfacturacion\CsPlug\Model\RequestOptions;
-use JsonException;
-use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
-use Throwable;
 
+use function array_key_exists;
 use function array_map;
-use function array_values;
 use function count;
 use function is_array;
 use function is_numeric;
@@ -26,19 +20,10 @@ final class CertificadosResource extends BaseResource
 {
     use ResponseHandlerTrait;
 
-    /**
-     * Get global certificates.
-     *
-     * @throws JsonException
-     * @throws ClientExceptionInterface
-     * @throws RedirectionExceptionInterface
-     * @throws ServerExceptionInterface
-     * @throws TransportExceptionInterface
-     * @throws Throwable
-     */
     public function list(?RequestOptions $options = null): PaginatedResponse
     {
         $path = '/certificados';
+        /** @var array<string, string> $queryParams */
         $queryParams = $options?->getQuery() ?? [];
 
         $request = $this->requestFactory->createRequest(
@@ -51,48 +36,37 @@ final class CertificadosResource extends BaseResource
         $this->handleResponse($response);
 
         $body = $response->bodyAsArray();
-        /** @var mixed $rawData */
-        $rawData = $body['data'] ?? [];
-        $dataList = is_array($rawData) ? array_values($rawData) : [];
 
+        /** @var list<CertificadoResponseDTO> $items */
         $items = array_map(
             /** @psalm-suppress MixedArgument */
-            static fn (mixed $item): Certificado => Certificado::fromArray($item), // @phpstan-ignore argument.type
-            $dataList,
+            static fn (mixed $item): CertificadoResponseDTO => CertificadoResponseDTO::fromArray($item), // @phpstan-ignore argument.type
+            (array) ($body['data'] ?? []),
         );
+
+        /** @var array<string, mixed> $pagination */
+        $pagination = $body['pagination'] ?? [];
 
         return new PaginatedResponse(
             $items,
-            isset($body['current_page']) && is_numeric($body['current_page'])
-                ? (int) $body['current_page']
+            is_numeric($pagination['current_page'] ?? null)
+                ? (int) $pagination['current_page']
                 : 1,
-            isset($body['total']) && is_numeric($body['total'])
-                ? (int) $body['total']
+            is_numeric($pagination['total'] ?? null)
+                ? (int) $pagination['total']
                 : count($items),
         );
     }
 
-    /**
-     * Upload a new global CSD certificate.
-     *
-     * @param CertificadoCsd $certificadoCsd The CSD data (key, cer, password).
-     *
-     * @return array<string, mixed> The API response.
-     *
-     * @throws ClientExceptionInterface
-     * @throws RedirectionExceptionInterface
-     * @throws ServerExceptionInterface
-     * @throws TransportExceptionInterface
-     * @throws JsonException
-     * @throws Throwable
-     */
-    public function create(CertificadoCsd $certificadoCsd, ?RequestOptions $options = null): array
-    {
+    public function create(
+        CertificadoRequestDTO $certificado,
+        ?RequestOptions $options = null,
+    ): CertificadoResponseDTO {
         $path = '/certificados';
 
         $request = $this->requestFactory->createRequest(
             uri: $path,
-            body: $certificadoCsd,
+            body: $certificado,
             method: HttpMethod::POST,
             options: $options,
         );
@@ -100,6 +74,12 @@ final class CertificadosResource extends BaseResource
         $response = $this->client->send($request);
         $this->handleResponse($response);
 
-        return $response->bodyAsArray();
+        $body = $response->bodyAsArray();
+        /** @var mixed $rawData */
+        $rawData = array_key_exists('data', $body) ? $body['data'] : $body;
+        /** @var array<string, mixed> $data */
+        $data = is_array($rawData) ? $rawData : [];
+
+        return CertificadoResponseDTO::fromArray($data);
     }
 }

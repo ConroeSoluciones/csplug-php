@@ -1,0 +1,8 @@
+{
+  "message": "CFDI cancelado correctamente",
+  "data": {
+    "uuid": "12345678-1234-1234-1234-123456789012",
+    "estatus": "Cancelado",
+    "fechaCancelacion": "2024-01-16T14:30:00"
+  }
+}

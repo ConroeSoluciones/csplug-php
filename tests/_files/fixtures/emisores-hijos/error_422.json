@@ -1,0 +1,15 @@
+{
+  "message": "The given data was invalid.",
+  "errors": {
+    "rfc": [
+      "The rfc field is required."
+    ],
+    "razon_social": [
+      "The razon social field is required."
+    ],
+    "domicilio_fiscal": [
+      "The domicilio fiscal field is required."
+    ]
+  },
+  "internal-code": "101"
+}

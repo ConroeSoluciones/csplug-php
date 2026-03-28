@@ -1,0 +1,20 @@
+{
+  "message": "Serie actualizada correctamente",
+  "data": {
+    "id_serie": 13427,
+    "id_emisor": 660,
+    "id_plantilla": 78,
+    "serie": "TEST_SDK_UPDATED",
+    "rango_inicial": 1,
+    "ruta_logo": null,
+    "fecha": "2026-03-27",
+    "tipo": 1,
+    "config": null,
+    "status": null,
+    "version": "2",
+    "estilo_conceptos": null,
+    "estilo_totales": null,
+    "decimales": 2,
+    "rfc_emisor": "AAA010101AAA"
+  }
+}

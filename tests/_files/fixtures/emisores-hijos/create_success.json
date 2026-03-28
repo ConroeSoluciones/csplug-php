@@ -1,0 +1,24 @@
+{
+  "message": "Emisor hijo creado correctamente",
+  "data": {
+    "id_emisor_hijo": 35,
+    "id_emisor": 660,
+    "rfc": "MOGI961108JH1",
+    "identificacion": null,
+    "razon_social": "Ivan Montero Gonzalez",
+    "domicilio_fiscal": "91760",
+    "configuracion": {
+      "CALLE": "",
+      "NEXT": "",
+      "NINT": "",
+      "COLONIA": "",
+      "LOCALIDAD": "",
+      "MUNICIPIO": "",
+      "ESTADO": "",
+      "PAIS": "",
+      "CIEC": "",
+      "automatizacion:csf": false,
+      "automatizacion:c32d": false
+    }
+  }
+}

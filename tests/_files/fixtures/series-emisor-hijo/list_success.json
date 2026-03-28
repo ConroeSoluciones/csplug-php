@@ -1,0 +1,30 @@
+{
+  "message": "Exito",
+  "data": [
+    {
+      "id_serie": 13400,
+      "id_emisor": 660,
+      "id_plantilla": 78,
+      "serie": "TS636",
+      "rango_inicial": 1,
+      "ruta_logo": null,
+      "fecha": "2026-02-19",
+      "tipo": 1,
+      "config": null,
+      "status": null,
+      "version": 2,
+      "estilo_conceptos": null,
+      "estilo_totales": null,
+      "decimales": 2,
+      "rfc_emisor": "AAA010101AAA"
+    }
+  ],
+  "pagination": {
+    "current_page": 1,
+    "per_page": 15,
+    "total": 1,
+    "last_page": 1,
+    "next_page_url": null,
+    "prev_page_url": null
+  }
+}

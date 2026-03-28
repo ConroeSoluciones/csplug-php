@@ -4,20 +4,14 @@ declare(strict_types=1);
 
 namespace Csfacturacion\CsPlug\Resources;
 
-use Csfacturacion\CsPlug\Model\Certificado;
-use Csfacturacion\CsPlug\Model\CertificadoCsd;
+use Csfacturacion\CsPlug\DTOs\Requests\CertificadoRequestDTO;
+use Csfacturacion\CsPlug\DTOs\Responses\CertificadoResponseDTO;
 use Csfacturacion\CsPlug\Model\HttpMethod;
 use Csfacturacion\CsPlug\Model\PaginatedResponse;
 use Csfacturacion\CsPlug\Model\RequestOptions;
-use JsonException;
-use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
-use Throwable;
 
+use function array_key_exists;
 use function array_map;
-use function array_values;
 use function count;
 use function is_array;
 use function is_numeric;
@@ -27,21 +21,10 @@ final class CertificadosEmisorHijoResource extends BaseResource
 {
     use ResponseHandlerTrait;
 
-    /**
-     * Get certificates for a child issuer (RFC).
-     *
-     * @param string $rfc The child issuer RFC.
-     *
-     * @throws JsonException
-     * @throws ClientExceptionInterface
-     * @throws RedirectionExceptionInterface
-     * @throws ServerExceptionInterface
-     * @throws TransportExceptionInterface
-     * @throws Throwable
-     */
     public function list(string $rfc, ?RequestOptions $options = null): PaginatedResponse
     {
         $path = sprintf('/emisores-hijos/%s/certificados', $rfc);
+        /** @var array<string, string> $queryParams */
         $queryParams = $options?->getQuery() ?? [];
 
         $request = $this->requestFactory->createRequest(
@@ -54,45 +37,38 @@ final class CertificadosEmisorHijoResource extends BaseResource
         $this->handleResponse($response);
 
         $body = $response->bodyAsArray();
-        /** @var mixed $rawData */
-        $rawData = $body['data'] ?? [];
-        $dataList = is_array($rawData) ? array_values($rawData) : [];
 
+        /** @var list<CertificadoResponseDTO> $items */
         $items = array_map(
             /** @psalm-suppress MixedArgument */
-            static fn (mixed $item): Certificado => Certificado::fromArray($item), // @phpstan-ignore argument.type
-            $dataList,
+            static fn (mixed $item): CertificadoResponseDTO => CertificadoResponseDTO::fromArray($item), // @phpstan-ignore argument.type
+            (array) ($body['data'] ?? []),
         );
+
+        /** @var array<string, mixed> $pagination */
+        $pagination = $body['pagination'] ?? [];
 
         return new PaginatedResponse(
             $items,
-            is_numeric($body['current_page'] ?? null) ? (int) $body['current_page'] : 1,
-            is_numeric($body['total'] ?? null) ? (int) $body['total'] : count($items),
+            is_numeric($pagination['current_page'] ?? null)
+                ? (int) $pagination['current_page']
+                : 1,
+            is_numeric($pagination['total'] ?? null)
+                ? (int) $pagination['total']
+                : count($items),
         );
     }
 
-    /**
-     * Upload a new CSD certificate for a child issuer (RFC).
-     *
-     * @param string $rfc The child issuer RFC.
-     * @param CertificadoCsd $certificadoCsd The CSD data (key, cer, password).
-     *
-     * @return array<string, mixed> The API response.
-     *
-     * @throws ClientExceptionInterface
-     * @throws RedirectionExceptionInterface
-     * @throws ServerExceptionInterface
-     * @throws TransportExceptionInterface
-     * @throws JsonException
-     * @throws Throwable
-     */
-    public function create(string $rfc, CertificadoCsd $certificadoCsd, ?RequestOptions $options = null): array
-    {
+    public function create(
+        string $rfc,
+        CertificadoRequestDTO $certificado,
+        ?RequestOptions $options = null,
+    ): CertificadoResponseDTO {
         $path = sprintf('/emisores-hijos/%s/certificados', $rfc);
 
         $request = $this->requestFactory->createRequest(
             uri: $path,
-            body: $certificadoCsd,
+            body: $certificado,
             method: HttpMethod::POST,
             options: $options,
         );
@@ -100,6 +76,12 @@ final class CertificadosEmisorHijoResource extends BaseResource
         $response = $this->client->send($request);
         $this->handleResponse($response);
 
-        return $response->bodyAsArray();
+        $body = $response->bodyAsArray();
+        /** @var mixed $rawData */
+        $rawData = array_key_exists('data', $body) ? $body['data'] : $body;
+        /** @var array<string, mixed> $data */
+        $data = is_array($rawData) ? $rawData : [];
+
+        return CertificadoResponseDTO::fromArray($data);
     }
 }

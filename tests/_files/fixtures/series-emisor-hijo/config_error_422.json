@@ -1,0 +1,6 @@
+{
+  "message": "El campo template es requerido",
+  "errors": {
+    "template": ["El campo template es requerido"]
+  }
+}

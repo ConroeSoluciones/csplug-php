@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Csfacturacion\CsPlug\Resources;
 
+use Csfacturacion\CsPlug\Contracts\HttpClient;
+use Csfacturacion\CsPlug\Contracts\RequestFactory;
 use Csfacturacion\CsPlug\Model\CsPlugConfig;
-use Csfacturacion\CsPlug\Util\HttpClient;
-use Csfacturacion\CsPlug\Util\RequestFactory;
 
 abstract class BaseResource
 {

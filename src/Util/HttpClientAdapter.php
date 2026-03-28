@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Csfacturacion\CsPlug\Util;
 
+use Csfacturacion\CsPlug\Contracts\HttpClient;
 use Csfacturacion\CsPlug\Model\HttpRequest;
 use Csfacturacion\CsPlug\Model\HttpResponse;
+use Override;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Symfony\Component\HttpClient\HttpClient as SymfonyHttpClient;
@@ -18,16 +20,16 @@ use Throwable;
 
 use function sprintf;
 
-final class HttpClient
+final class HttpClientAdapter implements HttpClient
 {
-    private HttpClientInterface $client;
+    private HttpClientInterface $symfonyClient;
     private LoggerInterface $logger;
 
     public function __construct(
-        ?HttpClientInterface $client = null,
+        ?HttpClientInterface $symfonyClient = null,
         ?LoggerInterface $logger = null,
     ) {
-        $this->client = $client ?? SymfonyHttpClient::create();
+        $this->symfonyClient = $symfonyClient ?? SymfonyHttpClient::create();
         $this->logger = $logger ?? new NullLogger();
     }
 
@@ -38,6 +40,7 @@ final class HttpClient
      * @throws RedirectionExceptionInterface
      * @throws ClientExceptionInterface
      */
+    #[Override]
     public function send(HttpRequest $request): HttpResponse
     {
         $this->logger->info(sprintf('Sending %s request to %s', $request->getHttpMethod()->name, $request->getUrl()));
@@ -50,7 +53,7 @@ final class HttpClient
             $options['json'] = $request->getBody();
         }
 
-        $response = $this->client->request(
+        $response = $this->symfonyClient->request(
             $request->getHttpMethod()->name,
             $request->getUrl(),
             $options,

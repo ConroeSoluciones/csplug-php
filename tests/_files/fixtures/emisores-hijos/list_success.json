@@ -1,0 +1,55 @@
+{
+  "message": "Exito",
+  "data": [
+    {
+      "id_emisor_hijo": 35,
+      "id_emisor": 660,
+      "rfc": "MOGI961108JH1",
+      "identificacion": null,
+      "razon_social": "Ivan Montero Gonzalez",
+      "domicilio_fiscal": "91760",
+      "configuracion": {
+        "CALLE": "",
+        "NEXT": "",
+        "NINT": "",
+        "COLONIA": "",
+        "LOCALIDAD": "",
+        "MUNICIPIO": "",
+        "ESTADO": "",
+        "PAIS": "",
+        "CIEC": "",
+        "automatizacion:csf": false,
+        "automatizacion:c32d": false
+      }
+    },
+    {
+      "id_emisor_hijo": 34,
+      "id_emisor": 660,
+      "rfc": "CSC240918AE2",
+      "identificacion": null,
+      "razon_social": "CORPORATIVO DE SERVIUCIOS CONSULTORIA Y CONERCIUALIZADORA",
+      "domicilio_fiscal": "91050",
+      "configuracion": {
+        "CALLE": "",
+        "NEXT": "",
+        "NINT": "",
+        "COLONIA": "",
+        "LOCALIDAD": "",
+        "MUNICIPIO": "",
+        "ESTADO": "",
+        "PAIS": "",
+        "CIEC": "",
+        "automatizacion:csf": false,
+        "automatizacion:c32d": false
+      }
+    }
+  ],
+  "pagination": {
+    "current_page": 1,
+    "per_page": 15,
+    "total": 2,
+    "last_page": 1,
+    "next_page_url": null,
+    "prev_page_url": null
+  }
+}

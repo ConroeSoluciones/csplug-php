@@ -1,0 +1,14 @@
+{
+  "message": "Configuración actualizada para la serie",
+  "data": {
+    "logo": null,
+    "logo_binary": null,
+    "decimal_quantity": null,
+    "orientation": "landscape",
+    "accent_color": "#FF5733",
+    "font_color": "#333333",
+    "nombre_comercial_enabled": null,
+    "nombre_comercial": null,
+    "sucursal": null
+  }
+}

@@ -83,15 +83,18 @@ final class EmisorHijo implements Buildable, Deserializable, JsonSerializable
      */
     public static function fromArray(array $data): self
     {
-        $rfc = isset($data['RFC']) && is_string($data['RFC']) ? $data['RFC'] : '';
-        $razonSocial = isset($data['RAZONSOCIAL']) && is_string($data['RAZONSOCIAL']) ? $data['RAZONSOCIAL'] : '';
-        $domicilioFiscal = isset($data['DOMICILIOFISCAL']) && is_string($data['DOMICILIOFISCAL'])
-            ? $data['DOMICILIOFISCAL']
-            : '';
+        // Support both API response format (snake_case) and legacy format (UPPERCASE)
+        $rfc = isset($data['rfc']) && is_string($data['rfc']) ? $data['rfc'] :
+               (isset($data['RFC']) && is_string($data['RFC']) ? $data['RFC'] : '');
+        $razonSocial = isset($data['razon_social']) && is_string($data['razon_social']) ? $data['razon_social'] :
+                       (isset($data['RAZONSOCIAL']) && is_string($data['RAZONSOCIAL']) ? $data['RAZONSOCIAL'] : '');
+        $domicilioFiscal = isset($data['domicilio_fiscal']) && is_string($data['domicilio_fiscal'])
+            ? $data['domicilio_fiscal']
+            : (isset($data['DOMICILIOFISCAL']) && is_string($data['DOMICILIOFISCAL']) ? $data['DOMICILIOFISCAL'] : '');
 
-        $configuracionRaw = isset($data['CONFIGURACION']) && is_array($data['CONFIGURACION'])
-            ? $data['CONFIGURACION']
-            : [];
+        $configuracionRaw = isset($data['configuracion']) && is_array($data['configuracion'])
+            ? $data['configuracion']
+            : (isset($data['CONFIGURACION']) && is_array($data['CONFIGURACION']) ? $data['CONFIGURACION'] : []);
 
         /** @var EmisorHijo $result */
         $result = (new EmisorHijoBuilder())

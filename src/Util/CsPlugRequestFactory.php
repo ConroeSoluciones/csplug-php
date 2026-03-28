@@ -4,27 +4,33 @@ declare(strict_types=1);
 
 namespace Csfacturacion\CsPlug\Util;
 
-use Csfacturacion\CsPlug\Model\AuthMode;
+use Csfacturacion\CsPlug\Auth\AuthStrategyFactory;
+use Csfacturacion\CsPlug\Contracts\AuthStrategy;
+use Csfacturacion\CsPlug\Contracts\RequestFactory;
 use Csfacturacion\CsPlug\Model\CsPlugConfig;
 use Csfacturacion\CsPlug\Model\HttpMethod;
 use Csfacturacion\CsPlug\Model\HttpRequest;
 use Csfacturacion\CsPlug\Model\RequestOptions;
 use JsonSerializable;
+use Override;
 
-use function base64_encode;
 use function http_build_query;
 
-final readonly class RequestFactory
+final readonly class CsPlugRequestFactory implements RequestFactory
 {
+    private AuthStrategy $authStrategy;
+
     public function __construct(
         private CsPlugConfig $config,
     ) {
+        $this->authStrategy = AuthStrategyFactory::create($config);
     }
 
     /**
      * @param array<mixed> $queryParams
      * @param JsonSerializable|array<string, mixed>|null $body
      */
+    #[Override]
     public function createRequest(
         string $uri,
         array $queryParams = [],
@@ -37,12 +43,12 @@ final readonly class RequestFactory
             'Content-Type' => 'application/json',
             'Accept' => 'application/json',
             'Servicio' => $xServicio->value,
-            'Authorization' => $this->resolveAuthorizationToken(),
+            'Authorization' => $this->authStrategy->getAuthorizationHeader(),
         ];
 
-        if ($this->config->getAuthMode() === AuthMode::BEARER) {
-            $xRfc = $options?->getContractId() ?? $this->config->getContractId();
-            $headers['X-Rfc'] = $xRfc;
+        $authHeaders = $this->authStrategy->getAdditionalHeaders($options);
+        foreach ($authHeaders as $key => $value) {
+            $headers[$key] = $value;
         }
 
         if ($options) {
@@ -70,14 +76,5 @@ final readonly class RequestFactory
         $req->setHeaders($typedHeaders);
 
         return $req;
-    }
-
-    private function resolveAuthorizationToken(): string
-    {
-        if ($this->config->getAuthMode() === AuthMode::BASIC) {
-            return base64_encode($this->config->getUsername() . ':' . $this->config->getPassword());
-        } else {
-            return 'Bearer ' . $this->config->getBearerToken();
-        }
     }
 }

@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace Csfacturacion\CsPlug\Resources;
 
-use Csfacturacion\CsPlug\Model\Cfdi;
+use Csfacturacion\CsPlug\DTOs\Requests\CfdiCancelarRequestDTO;
+use Csfacturacion\CsPlug\DTOs\Requests\CfdiTimbrarRequestDTO;
+use Csfacturacion\CsPlug\DTOs\Responses\CfdiResponseDTO;
 use Csfacturacion\CsPlug\Model\HttpMethod;
-use Csfacturacion\CsPlug\Model\PeticionCancelacion;
 use Csfacturacion\CsPlug\Model\RequestOptions;
-use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
-use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
-use Throwable;
+
+use function is_array;
 
 final class CfdiResource extends BaseResource
 {
@@ -20,17 +18,10 @@ final class CfdiResource extends BaseResource
 
     private const ENDPOINT = '/cfdi';
 
-    /**
-     * @param array<string, mixed> $comprobante
-     *
-     * @throws ClientExceptionInterface
-     * @throws RedirectionExceptionInterface
-     * @throws ServerExceptionInterface
-     * @throws TransportExceptionInterface
-     * @throws Throwable
- */
-    public function timbrar(array $comprobante, ?RequestOptions $options = null): Cfdi
-    {
+    public function timbrar(
+        CfdiTimbrarRequestDTO $comprobante,
+        ?RequestOptions $options = null,
+    ): CfdiResponseDTO {
         $request = $this->requestFactory->createRequest(
             uri: self::ENDPOINT,
             body: $comprobante,
@@ -46,21 +37,16 @@ final class CfdiResource extends BaseResource
         /** @var mixed $data */
         $data = $body['data'] ?? $body;
 
-        /** @psalm-suppress MixedArgument */
-        return Cfdi::fromTimbre($data); // @phpstan-ignore argument.type
+        /** @var array<string, mixed> $dataArray */
+        $dataArray = is_array($data) ? $data : [];
+
+        return CfdiResponseDTO::fromTimbre($dataArray);
     }
 
-    /**
-     * @param array<string, mixed> $comprobante
-     *
-     * @throws ClientExceptionInterface
-     * @throws RedirectionExceptionInterface
-     * @throws ServerExceptionInterface
-     * @throws Throwable
-     * @throws TransportExceptionInterface
-     */
-    public function demo(array $comprobante, ?RequestOptions $options = null): Cfdi
-    {
+    public function demo(
+        CfdiTimbrarRequestDTO $comprobante,
+        ?RequestOptions $options = null,
+    ): CfdiResponseDTO {
         $request = $this->requestFactory->createRequest(
             uri: '/demo' . self::ENDPOINT,
             body: $comprobante,
@@ -76,18 +62,13 @@ final class CfdiResource extends BaseResource
         /** @var mixed $data */
         $data = $body['data'] ?? $body;
 
-        /** @psalm-suppress MixedArgument */
-        return Cfdi::fromTimbre($data); // @phpstan-ignore argument.type
+        /** @var array<string, mixed> $dataArray */
+        $dataArray = is_array($data) ? $data : [];
+
+        return CfdiResponseDTO::fromTimbre($dataArray);
     }
 
-    /**
-     * @throws TransportExceptionInterface
-     * @throws Throwable
-     * @throws ServerExceptionInterface
-     * @throws RedirectionExceptionInterface
-     * @throws ClientExceptionInterface
-     */
-    public function show(string $uuid, ?RequestOptions $options = null): Cfdi
+    public function show(string $uuid, ?RequestOptions $options = null): CfdiResponseDTO
     {
         $request = $this->requestFactory->createRequest(
             uri: self::ENDPOINT . '/' . $uuid,
@@ -102,23 +83,24 @@ final class CfdiResource extends BaseResource
         /** @var mixed $data */
         $data = $body['data'] ?? $body;
 
-        /** @psalm-suppress MixedArgument */
-        return Cfdi::fromTimbre($data); // @phpstan-ignore argument.type
+        /** @var array<string, mixed> $dataArray */
+        $dataArray = is_array($data) ? $data : [];
+
+        return CfdiResponseDTO::fromArray($dataArray);
     }
 
     /**
-     * @throws ClientExceptionInterface
-     * @throws RedirectionExceptionInterface
-     * @throws ServerExceptionInterface
-     * @throws Throwable
-     * @throws TransportExceptionInterface
+     * @return array<string, mixed>
      */
     public function cancel(
-        PeticionCancelacion $peticionCancelacion,
+        CfdiCancelarRequestDTO $peticionCancelacion,
         ?RequestOptions $options = null,
         bool $isDemo = false,
-    ): mixed {
-        $uri = $isDemo ? '/demo' . self::ENDPOINT . '/cancelar' : self::ENDPOINT . '/cancelar';
+    ): array {
+        $uri = $isDemo
+            ? '/demo' . self::ENDPOINT . '/cancelar'
+            : self::ENDPOINT . '/cancelar';
+
         $request = $this->requestFactory->createRequest(
             uri: $uri,
             body: $peticionCancelacion,
@@ -132,19 +114,18 @@ final class CfdiResource extends BaseResource
 
         $body = $response->bodyAsArray();
 
-        return $body['data'] ?? $body;
+        /** @var array<string, mixed> $result */
+        $result = $body['data'] ?? $body;
+
+        return $result;
     }
 
     /**
-     * @param string[] $emails
+     * @param array<int, string> $emails
      *
-     * @throws ClientExceptionInterface
-     * @throws RedirectionExceptionInterface
-     * @throws ServerExceptionInterface
-     * @throws Throwable
-     * @throws TransportExceptionInterface
+     * @return array<string, mixed>
      */
-    public function resend(string $uuid, array $emails, ?RequestOptions $options = null): mixed
+    public function resend(string $uuid, array $emails, ?RequestOptions $options = null): array
     {
         $uri = self::ENDPOINT . "/{$uuid}/send";
         $request = $this->requestFactory->createRequest(
@@ -162,6 +143,9 @@ final class CfdiResource extends BaseResource
 
         $body = $response->bodyAsArray();
 
-        return $body['data'] ?? $body;
+        /** @var array<string, mixed> $result */
+        $result = $body['data'] ?? $body;
+
+        return $result;
     }
 }

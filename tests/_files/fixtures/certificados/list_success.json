@@ -1,0 +1,31 @@
+{
+  "message": "Exito",
+  "data": [
+    {
+      "id_cert_sello": 9149,
+      "id_emisor": 660,
+      "cer": "MIIF...base64...",
+      "serie_certificado": "30001000000400002335",
+      "inicio_vigencia": "May 29 14:50:01 2019 GMT",
+      "fin_vigencia": "May 29 14:50:01 2023 GMT",
+      "password_key": "12345678a",
+      "pem": "-----BEGIN PRIVATE KEY-----\nMII...\n-----END PRIVATE KEY-----",
+      "fecha": "2023-05-25",
+      "tipo": 0,
+      "tipo_certificado": 1,
+      "status": null,
+      "url": null,
+      "fecha_inicial": "2019-05-29 14:50:01",
+      "fecha_final": "2023-05-29 14:50:01",
+      "rfc_emisor": "AAA010101AAA"
+    }
+  ],
+  "pagination": {
+    "current_page": 1,
+    "per_page": 15,
+    "total": 1,
+    "last_page": 1,
+    "next_page_url": null,
+    "prev_page_url": null
+  }
+}

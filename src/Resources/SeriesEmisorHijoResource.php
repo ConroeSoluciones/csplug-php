@@ -4,10 +4,16 @@ declare(strict_types=1);
 
 namespace Csfacturacion\CsPlug\Resources;
 
+use Csfacturacion\CsPlug\DTOs\Requests\SerieConfigRequestDTO;
+use Csfacturacion\CsPlug\DTOs\Requests\SerieRequestDTO;
+use Csfacturacion\CsPlug\DTOs\Responses\SerieConfigResponseDTO;
+use Csfacturacion\CsPlug\DTOs\Responses\SerieResponseDTO;
+use Csfacturacion\CsPlug\Error\NotFound;
+use Csfacturacion\CsPlug\Error\Unauthorized;
+use Csfacturacion\CsPlug\Error\Validation;
 use Csfacturacion\CsPlug\Model\HttpMethod;
 use Csfacturacion\CsPlug\Model\PaginatedResponse;
 use Csfacturacion\CsPlug\Model\RequestOptions;
-use Csfacturacion\CsPlug\Model\Serie;
 
 use function array_key_exists;
 use function array_map;
@@ -26,6 +32,8 @@ final class SeriesEmisorHijoResource extends BaseResource
     public function list(string $rfc, ?RequestOptions $options = null): PaginatedResponse
     {
         $path = sprintf('/emisores-hijos/%s/series', $rfc);
+
+        /** @var array<string, string> $queryParams */
         $queryParams = $options?->getQuery() ?? [];
 
         $request = $this->requestFactory->createRequest(
@@ -39,25 +47,28 @@ final class SeriesEmisorHijoResource extends BaseResource
 
         $body = $response->bodyAsArray();
 
-        /** @var list<Serie> $items */
+        /** @var list<SerieResponseDTO> $items */
         $items = array_map(
             /** @psalm-suppress MixedArgument */
-            static fn (mixed $item): Serie => Serie::fromArray($item), // @phpstan-ignore argument.type
+            static fn (mixed $item): SerieResponseDTO => SerieResponseDTO::fromArray($item), // @phpstan-ignore argument.type
             (array) ($body['data'] ?? []),
         );
 
+        /** @var array<string, mixed> $pagination */
+        $pagination = $body['pagination'] ?? [];
+
         return new PaginatedResponse(
             $items,
-            isset($body['current_page']) && is_numeric($body['current_page'])
-                ? (int) $body['current_page']
+            is_numeric($pagination['current_page'] ?? null)
+                ? (int) $pagination['current_page']
                 : 1,
-            isset($body['total']) && is_numeric($body['total'])
-                ? (int) $body['total']
+            is_numeric($pagination['total'] ?? null)
+                ? (int) $pagination['total']
                 : count($items),
         );
     }
 
-    public function create(string $rfc, Serie $serie, ?RequestOptions $options = null): Serie
+    public function create(string $rfc, SerieRequestDTO $serie, ?RequestOptions $options = null): SerieResponseDTO
     {
         $path = sprintf('/emisores-hijos/%s/series', $rfc);
 
@@ -77,6 +88,74 @@ final class SeriesEmisorHijoResource extends BaseResource
         /** @var array<string, mixed> $data */
         $data = is_array($rawData) ? $rawData : [];
 
-        return Serie::fromArray($data);
+        return SerieResponseDTO::fromArray($data);
+    }
+
+    /**
+     * Update an existing serie.
+     *
+     * @throws NotFound When serie not found
+     * @throws Validation When validation fails
+     * @throws Unauthorized When authentication fails
+     */
+    public function update(
+        string $rfc,
+        int $idSerie,
+        SerieRequestDTO $serie,
+        ?RequestOptions $options = null,
+    ): SerieResponseDTO {
+        $path = sprintf('/emisores-hijos/%s/series/%d', $rfc, $idSerie);
+
+        $request = $this->requestFactory->createRequest(
+            uri: $path,
+            body: $serie,
+            method: HttpMethod::PUT,
+            options: $options,
+        );
+
+        $response = $this->client->send($request);
+        $this->handleResponse($response);
+
+        $body = $response->bodyAsArray();
+        /** @var mixed $rawData */
+        $rawData = array_key_exists('data', $body) ? $body['data'] : $body;
+        /** @var array<string, mixed> $data */
+        $data = is_array($rawData) ? $rawData : [];
+
+        return SerieResponseDTO::fromArray($data);
+    }
+
+    /**
+     * Configure a serie with custom settings.
+     *
+     * @throws NotFound When serie not found
+     * @throws Validation When validation fails
+     * @throws Unauthorized When authentication fails
+     */
+    public function configure(
+        string $rfc,
+        int $idSerie,
+        SerieConfigRequestDTO $config,
+        ?RequestOptions $options = null,
+    ): SerieConfigResponseDTO {
+        $path = sprintf('/emisores-hijos/%s/series/%d/config', $rfc, $idSerie);
+
+        $request = $this->requestFactory->createRequest(
+            uri: $path,
+            body: $config,
+            method: HttpMethod::POST,
+            options: $options,
+        );
+
+        $response = $this->client->send($request);
+        $this->handleResponse($response);
+
+        $body = $response->bodyAsArray();
+        /** @var mixed $rawData */
+        $rawData = array_key_exists('data', $body) ? $body['data'] : $body;
+        /** @var array<string, mixed> $data */
+        $data = is_array($rawData) ? $rawData : [];
+
+        return SerieConfigResponseDTO::fromArray($data);
     }
 }

@@ -23,12 +23,15 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "scripts": {
-        "analyse": [
-            "phpstan analyse",
-            "psalm"
+        "tests": [
+            "phpunit"
         ],
-        "lint": [
-            "phpcs"
+        "analyze": [
+            "phpstan analyse src",
+            "psalm src"
+        ],
+        "cs-check": [
+            "phpcs src"
         ]
     },
     "autoload": {

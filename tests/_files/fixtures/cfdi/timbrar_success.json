@@ -1,0 +1,17 @@
+{
+  "message": "CFDI timbrado correctamente",
+  "data": {
+    "cfdi": {
+      "uuid": "12345678-1234-1234-1234-123456789012",
+      "serie": "A",
+      "folio": "123",
+      "fecha": "2024-01-15T10:30:00",
+      "subTotal": 1000.00,
+      "total": 1160.00,
+      "descuento": 0.00
+    },
+    "xml": "PD94bWwgdmVyc2lvbj0iMS4wIj8+",
+    "pdf": "JVBERi0xLjQKJeLjz9MKMyAwIG9iago8PAovVHlwZSAvUGFnZQovUGFyZW50IDIgMCBSCi9NZWRpYUJveCBbMCAwIDYxMiA3OTJd",
+    "qr": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+  }
+}

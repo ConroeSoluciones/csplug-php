@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Csfacturacion\CsPlug;
 
+use Csfacturacion\CsPlug\Contracts\HttpClient;
+use Csfacturacion\CsPlug\Contracts\RequestFactory;
 use Csfacturacion\CsPlug\Model\CsPlugConfig;
 use Csfacturacion\CsPlug\Resources\CertificadosEmisorHijoResource;
 use Csfacturacion\CsPlug\Resources\CertificadosResource;
@@ -12,8 +14,8 @@ use Csfacturacion\CsPlug\Resources\EmisoresHijosResource;
 use Csfacturacion\CsPlug\Resources\PlantillasResource;
 use Csfacturacion\CsPlug\Resources\SeriesEmisorHijoResource;
 use Csfacturacion\CsPlug\Resources\SeriesResource;
-use Csfacturacion\CsPlug\Util\HttpClient;
-use Csfacturacion\CsPlug\Util\RequestFactory;
+use Csfacturacion\CsPlug\Util\CsPlugRequestFactory;
+use Csfacturacion\CsPlug\Util\HttpClientAdapter;
 
 final class CsPlugClient
 {
@@ -22,9 +24,11 @@ final class CsPlugClient
 
     public function __construct(
         private readonly CsPlugConfig $config,
+        ?HttpClient $httpClient = null,
+        ?RequestFactory $requestFactory = null,
     ) {
-        $this->client = new HttpClient();
-        $this->requestFactory = new RequestFactory($config);
+        $this->client = $httpClient ?? new HttpClientAdapter();
+        $this->requestFactory = $requestFactory ?? new CsPlugRequestFactory($config);
     }
 
     /**
