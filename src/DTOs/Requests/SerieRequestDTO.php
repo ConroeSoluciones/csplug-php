@@ -31,6 +31,7 @@ final class SerieRequestDTO implements JsonSerializable
      * @var array<string, mixed>|null
      */
     private ?array $config = null;
+    private ?int $rangoInicial = null;
 
     /**
      * Series name (unique per RFC).
@@ -82,6 +83,13 @@ final class SerieRequestDTO implements JsonSerializable
         return $this;
     }
 
+    public function withRangoInicial(int $rangoInicial): self
+    {
+        $this->rangoInicial = $rangoInicial;
+
+        return $this;
+    }
+
     /**
      * Optional configuration.
      *
@@ -109,6 +117,13 @@ final class SerieRequestDTO implements JsonSerializable
         if ($this->version === self::VERSION_CFDI && $this->tipo === null) {
             throw new InvalidArgumentException(
                 'Tipo is required for CFDI series (version 2)',
+            );
+        }
+
+        // Tipo is required for CFDI (version 2)
+        if ($this->rangoInicial === null) {
+            throw new InvalidArgumentException(
+                'RangoInicial is required for series',
             );
         }
 
