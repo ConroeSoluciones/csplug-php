@@ -160,6 +160,12 @@ final class SerieConfigRequestDTO implements JsonSerializable
      */
     public function build(): self
     {
+        if ($this->template === null) {
+            throw new InvalidArgumentException(
+                'Template is required for Serie configuration',
+            );
+        }
+
         return $this;
     }
 
@@ -169,11 +175,10 @@ final class SerieConfigRequestDTO implements JsonSerializable
     #[Override]
     public function jsonSerialize(): array
     {
-        $data = [];
-
-        if ($this->template !== null) {
-            $data['template'] = $this->template;
-        }
+        $this->build();
+        $data = [
+            'template' => $this->template,
+        ];
 
         if ($this->logo !== null) {
             $data['logo'] = $this->logo;
