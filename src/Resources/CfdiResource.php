@@ -16,7 +16,7 @@ final class CfdiResource extends BaseResource
 {
     use ResponseHandlerTrait;
 
-    private const ENDPOINT = '/cfdi';
+    private const string ENDPOINT = '/cfdi';
 
     public function timbrar(
         CfdiTimbrarRequestDTO $comprobante,
