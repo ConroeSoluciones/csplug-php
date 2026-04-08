@@ -143,7 +143,7 @@ final class SeriesEmisorHijoResource extends BaseResource
         $request = $this->requestFactory->createRequest(
             uri: $path,
             body: $config,
-            method: HttpMethod::POST,
+            method: HttpMethod::PUT,
             options: $options,
         );
 
