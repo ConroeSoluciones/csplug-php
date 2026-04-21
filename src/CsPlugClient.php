@@ -12,6 +12,7 @@ use Csfacturacion\CsPlug\Resources\CertificadosResource;
 use Csfacturacion\CsPlug\Resources\CfdiResource;
 use Csfacturacion\CsPlug\Resources\EmisoresHijosResource;
 use Csfacturacion\CsPlug\Resources\PlantillasResource;
+use Csfacturacion\CsPlug\Resources\RetencionResource;
 use Csfacturacion\CsPlug\Resources\SeriesEmisorHijoResource;
 use Csfacturacion\CsPlug\Resources\SeriesResource;
 use Csfacturacion\CsPlug\Util\CsPlugRequestFactory;
@@ -72,5 +73,11 @@ final class CsPlugClient
     public function cfdi(): CfdiResource
     {
         return new CfdiResource($this->client, $this->requestFactory, $this->config);
+    }
+
+    public function retencion() : RetencionResource
+    {
+
+        return new RetencionResource($this->client, $this->requestFactory, $this->config);
     }
 }
