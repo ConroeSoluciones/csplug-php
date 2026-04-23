@@ -28,6 +28,8 @@ final class RetencionCancelarRequestDTO implements JsonSerializable
     private ?string $uuidRelacionado = null;
     private ?string $motivoCancelacion = null;
     private ?string $contractId = null;
+    private ?string $webhookUrl = null;
+
 
     public function withRfcEmisor(string $rfcEmisor): self
     {
@@ -101,6 +103,12 @@ final class RetencionCancelarRequestDTO implements JsonSerializable
         return $this;
     }
 
+    public function withWebhookUrl(string $webhookUrl): self {
+        $this->webhookUrl = $webhookUrl;
+
+        return $this;
+    }
+
     public function build(): self
     {
         if ($this->uuid === '') {
@@ -149,6 +157,10 @@ final class RetencionCancelarRequestDTO implements JsonSerializable
 
         if ($this->contractId !== null) {
             $data['rfcCliente'] = $this->contractId;
+        }
+
+        if ($this->webhookUrl !== null) {
+            $data['webhookUrl'] = $this->webhookUrl;
         }
 
         return $data;
