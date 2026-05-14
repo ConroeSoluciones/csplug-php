@@ -86,7 +86,7 @@ final class RetencionResource extends BaseResource
         /** @var array<string, mixed> $dataArray */
         $dataArray = is_array($data) ? $data : [];
 
-        return RetencionResponseDTO::fromArray($dataArray);
+        return RetencionResponseDTO::fromTimbre($dataArray);
     }
 
     /**

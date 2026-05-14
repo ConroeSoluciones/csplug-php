@@ -86,7 +86,7 @@ final class CfdiResource extends BaseResource
         /** @var array<string, mixed> $dataArray */
         $dataArray = is_array($data) ? $data : [];
 
-        return CfdiResponseDTO::fromArray($dataArray);
+        return CfdiResponseDTO::fromTimbre($dataArray);
     }
 
     /**
