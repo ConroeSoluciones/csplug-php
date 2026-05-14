@@ -34,17 +34,15 @@ final readonly class CfdiResponseDTO
      */
     public static function fromArray(array $data): self
     {
-        $cfdiData = is_array($data['cfdi'] ?? null) ? $data['cfdi'] : [];
-
         // Support various response formats from API
-        $uuid = $cfdiData['uuid'] ?? $cfdiData['UUID'] ?? null;
-        $serie = $cfdiData['serie'] ?? $cfdiData['SERIE'] ?? null;
-        $folio = $cfdiData['folio'] ?? $cfdiData['FOLIO'] ?? null;
-        $fecha = $cfdiData['fecha'] ?? $cfdiData['FECHA'] ?? null;
-        $subTotal = $cfdiData['subTotal'] ?? $cfdiData['SUBTOTAL'] ?? 0;
-        $total = $cfdiData['total'] ?? $cfdiData['TOTAL'] ?? 0;
-        $descuento = $cfdiData['descuento'] ?? $cfdiData['DESCUENTO'] ?? null;
-        $estatus = $cfdiData['estatus'] ?? $cfdiData['ESTATUS'] ?? null;
+        $uuid = $data['uuid'] ?? $data['UUID'] ?? null;
+        $serie = $data['serie'] ?? $data['SERIE'] ?? null;
+        $folio = $data['folio'] ?? $data['FOLIO'] ?? null;
+        $fecha = $data['fecha'] ?? $data['FECHA'] ?? null;
+        $subTotal = $data['subTotal'] ?? $data['SUBTOTAL'] ?? 0;
+        $total = $data['total'] ?? $data['TOTAL'] ?? 0;
+        $descuento = $data['descuento'] ?? $data['DESCUENTO'] ?? null;
+        $estatus = $data['estatus'] ?? $data['ESTATUS'] ?? null;
         $procedencia = $data['procedencia'] ?? $data['PROCEDENCIA'] ?? 'timbre';
         $xmlBase64 = $data['xml'] ?? $data['xmlBase64'] ?? $data['XML'] ?? null;
         $pdfBase64 = $data['pdf'] ?? $data['pdfBase64'] ?? $data['PDF'] ?? null;
@@ -81,7 +79,7 @@ final readonly class CfdiResponseDTO
             'serie' => $cfdiData['serie'] ?? $cfdiData['SERIE'] ?? null,
             'folio' => $cfdiData['folio'] ?? $cfdiData['FOLIO'] ?? null,
             'fecha' => $cfdiData['fecha'] ?? $cfdiData['FECHA'] ?? null,
-            'subTotal' => $cfdiData['subTotal'] ?? $cfdiData['SUBTOTAL'] ?? 0,
+            'subTotal' => $cfdiData['subtotal'] ?? $cfdiData['SUBTOTAL'] ?? 0,
             'total' => $cfdiData['total'] ?? $cfdiData['TOTAL'] ?? 0,
             'descuento' => $cfdiData['descuento'] ?? $cfdiData['DESCUENTO'] ?? null,
             'xml' => $data['xml'] ?? null,
