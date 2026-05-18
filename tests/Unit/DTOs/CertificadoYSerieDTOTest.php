@@ -97,14 +97,15 @@ final class CertificadoYSerieDTOTest extends TestCase
         $dto = (new SerieRequestDTO())
             ->withSerie('TEST_SERIE')
             ->withVersion(SerieRequestDTO::VERSION_CFDI)
-            ->withTipo(SerieRequestDTO::TIPO_USO_GENERAL)
-            ->withIdPlantilla(78)
+            ->withTipo(SerieRequestDTO::TIPO_COMPROBANTE_INGRESO)
+            ->withClavePlantilla('default')
+            ->withRangoInicial(1)
             ->build();
 
         $this->assertSame('TEST_SERIE', $dto->getSerie());
-        $this->assertSame(2, $dto->getVersion());
-        $this->assertSame(1, $dto->getTipo());
-        $this->assertSame(78, $dto->getIdPlantilla());
+        $this->assertSame(SerieRequestDTO::VERSION_CFDI, $dto->getVersion());
+        $this->assertSame(SerieRequestDTO::TIPO_COMPROBANTE_INGRESO, $dto->getTipo());
+        $this->assertSame('default', $dto->getClavePlantilla());
     }
 
     public function testSerieRequestDTOCanBeBuiltForRetenciones(): void
@@ -112,10 +113,11 @@ final class CertificadoYSerieDTOTest extends TestCase
         $dto = (new SerieRequestDTO())
             ->withSerie('RET_SERIE')
             ->withVersion(SerieRequestDTO::VERSION_RETENCIONES)
+            ->withRangoInicial(1)
             ->build();
 
         $this->assertSame('RET_SERIE', $dto->getSerie());
-        $this->assertSame(3, $dto->getVersion());
+        $this->assertSame(SerieRequestDTO::VERSION_RETENCIONES, $dto->getVersion());
         $this->assertNull($dto->getTipo()); // Tipo not required for retenciones
     }
 
@@ -130,23 +132,23 @@ final class CertificadoYSerieDTOTest extends TestCase
     public function testSerieRequestDTOValidatesVersion(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Version must be 2 (CFDI) or 3 (Retenciones)');
+        $this->expectExceptionMessage('Version must be CFDI or RETENCIONES');
 
-        (new SerieRequestDTO())->withVersion(99);
+        (new SerieRequestDTO())->withVersion('99');
     }
 
     public function testSerieRequestDTOValidatesTipo(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Tipo must be 1 (General), 2 (Nomina), or 3 (Pagos)');
+        $this->expectExceptionMessage('Tipo must be I (Ingreso), E (Egreso), N (Nomina), or P (Pago)');
 
-        (new SerieRequestDTO())->withTipo(99);
+        (new SerieRequestDTO())->withTipo('99');
     }
 
     public function testSerieRequestDTORequiresTipoForCFDI(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Tipo is required for CFDI series (version 2)');
+        $this->expectExceptionMessage('Tipo is required for CFDI series');
 
         (new SerieRequestDTO())
             ->withSerie('TEST')

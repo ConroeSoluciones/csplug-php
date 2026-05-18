@@ -141,8 +141,8 @@ final class SeriesEmisorHijoResourceTest extends TestCase
         $serieRequest = (new SerieRequestDTO())
             ->withSerie('TEST_SDK')
             ->withVersion(SerieRequestDTO::VERSION_CFDI)
-            ->withTipo(SerieRequestDTO::TIPO_USO_GENERAL)
-            ->withIdPlantilla(78);
+            ->withTipo(SerieRequestDTO::TIPO_COMPROBANTE_INGRESO)
+            ->withClavePlantilla('default');
 
         $mockRequest = new HttpRequest('/emisores-hijos/AAA010101AAA/series', $serieRequest, HttpMethod::POST);
 
@@ -163,7 +163,7 @@ final class SeriesEmisorHijoResourceTest extends TestCase
         $serieRequest = (new SerieRequestDTO())
             ->withSerie('TEST_SDK')
             ->withVersion(SerieRequestDTO::VERSION_CFDI)
-            ->withTipo(SerieRequestDTO::TIPO_USO_GENERAL);
+            ->withTipo(SerieRequestDTO::TIPO_COMPROBANTE_INGRESO);
 
         $mockRequest = new HttpRequest('/emisores-hijos/AAA010101AAA/series', $serieRequest, HttpMethod::POST);
 
@@ -184,8 +184,8 @@ final class SeriesEmisorHijoResourceTest extends TestCase
         $serieRequest = (new SerieRequestDTO())
             ->withSerie('TEST_SDK_UPDATED')
             ->withVersion(SerieRequestDTO::VERSION_CFDI)
-            ->withTipo(SerieRequestDTO::TIPO_USO_GENERAL)
-            ->withIdPlantilla(78);
+            ->withTipo(SerieRequestDTO::TIPO_COMPROBANTE_INGRESO)
+            ->withClavePlantilla('default');
 
         $rfc = 'AAA010101AAA';
         $idSerie = 13427;
@@ -208,7 +208,7 @@ final class SeriesEmisorHijoResourceTest extends TestCase
         $serieRequest = (new SerieRequestDTO())
             ->withSerie('TEST_SDK')
             ->withVersion(SerieRequestDTO::VERSION_CFDI)
-            ->withTipo(SerieRequestDTO::TIPO_USO_GENERAL);
+            ->withTipo(SerieRequestDTO::TIPO_COMPROBANTE_INGRESO);
 
         $mockRequest = new HttpRequest('/emisores-hijos/AAA010101AAA/series/99999', $serieRequest, HttpMethod::PUT);
 

@@ -144,8 +144,8 @@ final class SeriesResourceTest extends TestCase
         $serie = (new SerieRequestDTO())
             ->withSerie('TEST_SDK')
             ->withVersion(SerieRequestDTO::VERSION_CFDI)
-            ->withTipo(SerieRequestDTO::TIPO_USO_GENERAL)
-            ->withIdPlantilla(78);
+            ->withTipo(SerieRequestDTO::TIPO_COMPROBANTE_INGRESO)
+            ->withClavePlantilla('default');
 
         $mockRequest = new HttpRequest('/series', $serie, HttpMethod::POST);
 

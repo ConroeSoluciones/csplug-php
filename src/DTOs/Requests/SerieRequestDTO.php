@@ -15,17 +15,26 @@ use function in_array;
  */
 final class SerieRequestDTO implements JsonSerializable
 {
-    public const VERSION_CFDI = 2;
-    public const VERSION_RETENCIONES = 3;
+    public const string VERSION_CFDI = 'CFDI';
+    public const string VERSION_RETENCIONES = 'RETENCIONES';
 
-    public const TIPO_USO_GENERAL = 1;
-    public const TIPO_NOMINA = 2;
-    public const TIPO_PAGOS = 3;
+    public const string TIPO_COMPROBANTE_INGRESO = 'I';
+    public const string TIPO_COMPROBANTE_EGRESO = 'E';
+    public const string TIPO_COMPROBANTE_NOMINA = 'N';
+    public const string TIPO_COMPROBANTE_PAGO = 'P';
+
+    public const array VERSIONES_COMPROBANTE = [self::VERSION_CFDI, self::VERSION_RETENCIONES];
+    public const array TIPOS_COMPROBANTES = [
+        self::TIPO_COMPROBANTE_INGRESO,
+        self::TIPO_COMPROBANTE_EGRESO,
+        self::TIPO_COMPROBANTE_NOMINA,
+        self::TIPO_COMPROBANTE_PAGO,
+    ];
 
     private ?string $serie = null;
-    private ?int $version = null;
-    private ?int $tipo = null;
-    private ?int $idPlantilla = null;
+    private ?string $version = null;
+    private ?string $tipo = null;
+    private ?string $clavePlantilla = null;
 
     /**
      * @var array<string, mixed>|null
@@ -47,12 +56,12 @@ final class SerieRequestDTO implements JsonSerializable
     }
 
     /**
-     * Version: 2 for CFDI, 3 for Retenciones.
+     * Version: CFDI or RETENCIONES.
      */
-    public function withVersion(int $version): self
+    public function withVersion(string $version): self
     {
-        if (!in_array($version, [self::VERSION_CFDI, self::VERSION_RETENCIONES], true)) {
-            throw new InvalidArgumentException('Version must be 2 (CFDI) or 3 (Retenciones)');
+        if (!in_array($version, self::VERSIONES_COMPROBANTE, true)) {
+            throw new InvalidArgumentException('Version must be CFDI or RETENCIONES');
         }
         $this->version = $version;
 
@@ -60,13 +69,13 @@ final class SerieRequestDTO implements JsonSerializable
     }
 
     /**
-     * Document type: 1=General, 2=Nomina, 3=Pagos.
+     * Document type: I (Ingreso), E (Egreso), N (Nomina), P (Pago).
      * Optional but required for CFDI.
      */
-    public function withTipo(int $tipo): self
+    public function withTipo(string $tipo): self
     {
-        if (!in_array($tipo, [self::TIPO_USO_GENERAL, self::TIPO_NOMINA, self::TIPO_PAGOS], true)) {
-            throw new InvalidArgumentException('Tipo must be 1 (General), 2 (Nomina), or 3 (Pagos)');
+        if (!in_array($tipo, self::TIPOS_COMPROBANTES, true)) {
+            throw new InvalidArgumentException('Tipo must be I (Ingreso), E (Egreso), N (Nomina), or P (Pago)');
         }
         $this->tipo = $tipo;
 
@@ -74,11 +83,11 @@ final class SerieRequestDTO implements JsonSerializable
     }
 
     /**
-     * Template ID (required, usually 78 for "Default").
+     * Template ID (required, e.g. "default" for the default template).
      */
-    public function withIdPlantilla(int $idPlantilla): self
+    public function withClavePlantilla(string $clavePlantilla): self
     {
-        $this->idPlantilla = $idPlantilla;
+        $this->clavePlantilla = $clavePlantilla;
 
         return $this;
     }
@@ -113,14 +122,12 @@ final class SerieRequestDTO implements JsonSerializable
             );
         }
 
-        // Tipo is required for CFDI (version 2)
         if ($this->version === self::VERSION_CFDI && $this->tipo === null) {
             throw new InvalidArgumentException(
-                'Tipo is required for CFDI series (version 2)',
+                'Tipo is required for CFDI series',
             );
         }
 
-        // Tipo is required for CFDI (version 2)
         if ($this->rangoInicial === null) {
             throw new InvalidArgumentException(
                 'RangoInicial is required for series',
@@ -148,8 +155,8 @@ final class SerieRequestDTO implements JsonSerializable
             $data['tipo'] = $this->tipo;
         }
 
-        if ($this->idPlantilla !== null) {
-            $data['id_plantilla'] = $this->idPlantilla;
+        if ($this->clavePlantilla !== null) {
+            $data['id_plantilla'] = $this->clavePlantilla;
         }
 
         if ($this->config !== null) {
@@ -169,22 +176,22 @@ final class SerieRequestDTO implements JsonSerializable
 
     public function getSerie(): ?string
     {
-        return $this->serie;
+        return $this->serie ?? null;
     }
 
-    public function getVersion(): ?int
+    public function getVersion(): ?string
     {
-        return $this->version;
+        return $this->version ?? null;
     }
 
-    public function getTipo(): ?int
+    public function getTipo(): ?string
     {
-        return $this->tipo;
+        return $this->tipo ?? null;
     }
 
-    public function getIdPlantilla(): ?int
+    public function getClavePlantilla(): ?string
     {
-        return $this->idPlantilla;
+        return $this->clavePlantilla ?? null;
     }
 
     /**
