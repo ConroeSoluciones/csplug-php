@@ -147,12 +147,12 @@ final class SerieRequestDTO implements JsonSerializable
 
         $data = [
             'serie' => $this->serie,
-            'version' => $this->version,
+            'tipo_documento' => $this->version,
             'rango_inicial' => $this->rangoInicial,
         ];
 
         if ($this->tipo !== null) {
-            $data['tipo'] = $this->tipo;
+            $data['tipo_comprobante'] = $this->tipo;
         }
 
         if ($this->clavePlantilla !== null) {
