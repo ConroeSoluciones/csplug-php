@@ -6,6 +6,6 @@ namespace Csfacturacion\CsPlug\Model;
 
 enum Service : string
 {
-    case CSPLUG = 'CSP';
+    case CSPLUG = 'CPG';
     case CSWEB = 'CWB20';
 }
