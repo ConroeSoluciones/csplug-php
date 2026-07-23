@@ -27,7 +27,7 @@ final readonly class SerieResponseDTO
         public int $idPlantilla,
         public string $serie,
         public int $rangoInicial,
-        public ?string $rutaLogo,
+        public ?string $logo,
         public string $fecha,
         public int $tipo,
         public ?array $config,
@@ -51,7 +51,7 @@ final readonly class SerieResponseDTO
         $idPlantilla = $data['id_plantilla'] ?? $data['IDPLANTILLA'] ?? null;
         $serie = $data['serie'] ?? $data['SERIE'] ?? null;
         $rangoInicial = $data['rango_inicial'] ?? $data['RANGOINICIAL'] ?? null;
-        $rutaLogo = $data['ruta_logo'] ?? $data['RUTALOGO'] ?? null;
+        $logo = $data['logo_base64'] ?? $data['LOGO_BASE64'] ?? null;
         $fecha = $data['fecha'] ?? $data['FECHA'] ?? null;
         $tipo = $data['tipo'] ?? $data['TIPO'] ?? 1;
         $config = $data['config'] ?? $data['CONFIG'] ?? null;
@@ -74,7 +74,7 @@ final readonly class SerieResponseDTO
             idPlantilla: self::toInt($idPlantilla, 0),
             serie: self::toString($serie),
             rangoInicial: self::toInt($rangoInicial, 1),
-            rutaLogo: self::toNullableString($rutaLogo),
+            logo: self::toNullableString($logo),
             fecha: self::toString($fecha),
             tipo: self::toInt($tipo, 1),
             config: self::toArrayMap($config),
@@ -98,7 +98,7 @@ final readonly class SerieResponseDTO
             'id_plantilla' => $this->idPlantilla,
             'serie' => $this->serie,
             'rango_inicial' => $this->rangoInicial,
-            'ruta_logo' => $this->rutaLogo,
+            'logo' => $this->logo,
             'fecha' => $this->fecha,
             'tipo' => $this->tipo,
             'config' => $this->config,

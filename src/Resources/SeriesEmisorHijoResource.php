@@ -68,6 +68,28 @@ final class SeriesEmisorHijoResource extends BaseResource
         );
     }
 
+    public function show(string $rfc, int $idSerie, ?RequestOptions $options = null): SerieResponseDTO
+    {
+        $path = sprintf('/emisores-hijos/%s/series/%d', $rfc, $idSerie);
+
+        $request = $this->requestFactory->createRequest(
+            uri: $path,
+            options: $options,
+        );
+        $response = $this->client->send($request);
+
+        $this->handleResponse($response);
+
+        $body = $response->bodyAsArray();
+
+        /** @var mixed $rawData */
+        $rawData = array_key_exists('data', $body) ? $body['data'] : $body;
+        /** @var array<string, mixed> $data */
+        $data = is_array($rawData) ? $rawData : [];
+
+        return SerieResponseDTO::fromArray($data);
+    }
+
     public function create(string $rfc, SerieRequestDTO $serie, ?RequestOptions $options = null): SerieResponseDTO
     {
         $path = sprintf('/emisores-hijos/%s/series', $rfc);
