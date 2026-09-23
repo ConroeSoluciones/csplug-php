@@ -52,4 +52,12 @@ final class RetencionTimbrarRequestDTO implements JsonSerializable
     {
         return $this->comprobante;
     }
+
+    /**
+     * @param array<string, mixed> $comprobante
+     */
+    public static function create(array $comprobante): self
+    {
+        return new self($comprobante);
+    }
 }
