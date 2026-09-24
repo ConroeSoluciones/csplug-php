@@ -1,0 +1,88 @@
+{
+  "current_page": 1,
+  "data": [
+    {
+      "UUID": "61894DC4-8E68-BA43-9A48-456D6D23B536",
+      "FECHA": "2017-09-27",
+      "TOTAL": "1078.00",
+      "ESTATUS": "Vigente",
+      "FOLIO": " -0",
+      "cabecera": {
+        "serie": "kjfafasgagfasfgasgfa",
+        "folio": " -0",
+        "fecha": "2017-09-27",
+        "hora": "11:32:50",
+        "estatus": "Vigente",
+        "tipo_cfdi": "I",
+        "tipo_comprobante": "Factura",
+        "version": "3.3",
+        "moneda": "MXN@1",
+        "forma_pago": "01",
+        "metodo_pago": "PUE@PAGO EN UNA SOLA EXHIBICIÓN",
+        "uso_cfdi": "P01",
+        "lugar_expedicion": "96400",
+        "subtotal": "1078.00",
+        "descuento": "0.000000",
+        "total": "1078.00",
+        "emisor": {
+          "rfc": "AAA010101AAA",
+          "razon_social": "EMPRESA DEMO",
+          "regimen_fiscal": "603"
+        },
+        "receptor": {
+          "rfc": "AAA010101AAA",
+          "razon_social": "EMPRESA DEMO",
+          "codigo_postal": ""
+        }
+      },
+      "conceptos": [
+        {
+          "id": 346968596,
+          "identificacion": "1",
+          "cantidad": "1.000000",
+          "unidad": "RECAUDACION",
+          "clave_unidad": "ACT",
+          "clave_prod_serv": "01010101",
+          "descripcion": "ARRENDAMIENTO DE ZONA FEDERAL USO Y GOCE DE SUELDO DE  LA  ZONA FEDERAL MARITIMO Y TERRESTRE POR EL",
+          "precio": "525.000000",
+          "precio_base": "525.000000",
+          "descuento": "0.000000",
+          "objeto_imp": null,
+          "impuestos": [
+            {
+              "traslados": null,
+              "retenciones": null
+            }
+          ],
+          "a_cuenta_terceros": null
+        }
+      ],
+      "impuestos_globales": [
+        {
+          "total_impuestos_trasladados": "",
+          "total_impuestos_retenidos": "",
+          "traslados": null,
+          "retenciones": null
+        }
+      ],
+      "datos_extra": [
+        {
+          "ordenCompra": null,
+          "Observaciones": null,
+          "estimuloFiscal": 0
+        }
+      ]
+    }
+  ],
+  "first_page_url": "https://csplug.csfacturacion.com/cfdi?page=1",
+  "from": 1,
+  "last_page": 109667,
+  "last_page_url": "https://csplug.csfacturacion.com/cfdi?page=109667",
+  "links": [],
+  "next_page_url": "https://csplug.csfacturacion.com/cfdi?page=2",
+  "path": "https://csplug.csfacturacion.com/cfdi",
+  "per_page": 20,
+  "prev_page_url": null,
+  "to": 20,
+  "total": 2193331
+}

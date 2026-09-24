@@ -7,14 +7,18 @@ namespace Csfacturacion\Test\CsPlug\Unit\Resources;
 use Csfacturacion\CsPlug\Contracts\HttpClient;
 use Csfacturacion\CsPlug\Contracts\RequestFactory;
 use Csfacturacion\CsPlug\DTOs\Requests\CfdiCancelarRequestDTO;
+use Csfacturacion\CsPlug\DTOs\Requests\CfdiListQueryDTO;
 use Csfacturacion\CsPlug\DTOs\Requests\CfdiTimbrarRequestDTO;
+use Csfacturacion\CsPlug\DTOs\Responses\CfdiListResponseDTO;
 use Csfacturacion\CsPlug\DTOs\Responses\CfdiResponseDTO;
+use Csfacturacion\CsPlug\Model\CfdiEstatus;
 use Csfacturacion\CsPlug\Model\CsPlugConfig;
 use Csfacturacion\CsPlug\Model\HttpMethod;
 use Csfacturacion\CsPlug\Model\HttpRequest;
 use Csfacturacion\CsPlug\Model\HttpResponse;
 use Csfacturacion\CsPlug\Resources\CfdiResource;
 use Csfacturacion\Test\CsPlug\TestCase;
+use InvalidArgumentException;
 use JsonException;
 use Override;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -152,6 +156,111 @@ final class CfdiResourceTest extends TestCase
 
         $this->assertIsArray($result);
         $this->assertSame('Cancelado', $result['estatus']);
+    }
+
+    public function testListReturnsPaginatedResponseOnSuccess(): void
+    {
+        $fixture = $this->loadFixture('cfdi_list_success');
+        $mockResponse = $this->createMockResponse($fixture, 200);
+
+        $query = new CfdiListQueryDTO();
+        $query
+            ->withPage(1)
+            ->withPageSize(20)
+            ->withStartDate('2017-01-01')
+            ->withEndDate('2017-12-31')
+            ->withEstatus(CfdiEstatus::Vigente);
+
+        $mockRequest = new HttpRequest('/cfdi', null, HttpMethod::GET);
+
+        $this->requestFactory->expects($this->once())
+            ->method('createRequest')
+            ->with(
+                '/cfdi',
+                $query->toArray(),
+                null,
+                HttpMethod::GET,
+            )
+            ->willReturn($mockRequest);
+        $this->httpClient->expects($this->once())->method('send')->willReturn($mockResponse);
+
+        $result = $this->resource->list($query);
+
+        $this->assertInstanceOf(CfdiListResponseDTO::class, $result);
+        $this->assertCount(1, $result->items);
+
+        $item = $result->items[0];
+        $this->assertSame('61894DC4-8E68-BA43-9A48-456D6D23B536', $item->uuid);
+        $this->assertSame('2017-09-27', $item->fecha);
+        $this->assertSame(1078.00, $item->total);
+        $this->assertSame('Vigente', $item->estatus);
+        $this->assertSame(' -0', $item->folio);
+        $this->assertSame('AAA010101AAA', $item->cabecera->emisor->rfc);
+        $this->assertSame('EMPRESA DEMO', $item->cabecera->emisor->razonSocial);
+        $this->assertSame('603', $item->cabecera->emisor->regimenFiscal);
+        $this->assertSame('AAA010101AAA', $item->cabecera->receptor->rfc);
+
+        $this->assertSame(1, $result->pagination->currentPage);
+        $this->assertSame(20, $result->pagination->perPage);
+        $this->assertSame(109667, $result->pagination->lastPage);
+        $this->assertSame(2193331, $result->pagination->total);
+        $this->assertSame('https://csplug.csfacturacion.com/cfdi?page=2', $result->pagination->nextPageUrl);
+    }
+
+    public function testListWithRfcEmisorSendsQueryParam(): void
+    {
+        $fixture = $this->loadFixture('cfdi_list_success');
+        $mockResponse = $this->createMockResponse($fixture, 200);
+
+        $query = new CfdiListQueryDTO();
+        $query->withRfcEmisor('ABC010101XYZ');
+
+        $mockRequest = new HttpRequest('/cfdi', null, HttpMethod::GET);
+
+        $this->requestFactory->expects($this->once())
+            ->method('createRequest')
+            ->with(
+                '/cfdi',
+                ['page' => '1', 'page_size' => '20', 'rfc_emisor' => 'ABC010101XYZ'],
+                null,
+                HttpMethod::GET,
+            )
+            ->willReturn($mockRequest);
+        $this->httpClient->expects($this->once())->method('send')->willReturn($mockResponse);
+
+        $result = $this->resource->list($query);
+
+        $this->assertInstanceOf(CfdiListResponseDTO::class, $result);
+        $this->assertCount(1, $result->items);
+    }
+
+    public function testListWithRfcEmisorRejectsEmptyString(): void
+    {
+        $query = new CfdiListQueryDTO();
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('RfcEmisor cannot be empty');
+
+        $query->withRfcEmisor('');
+    }
+
+    public function testListWithoutQuerySendsDefaults(): void
+    {
+        $fixture = $this->loadFixture('cfdi_list_success');
+        $mockResponse = $this->createMockResponse($fixture, 200);
+
+        $mockRequest = new HttpRequest('/cfdi', null, HttpMethod::GET);
+
+        $this->requestFactory->expects($this->once())
+            ->method('createRequest')
+            ->with('/cfdi', ['page' => '1', 'page_size' => '20'], null, HttpMethod::GET)
+            ->willReturn($mockRequest);
+        $this->httpClient->expects($this->once())->method('send')->willReturn($mockResponse);
+
+        $result = $this->resource->list();
+
+        $this->assertInstanceOf(CfdiListResponseDTO::class, $result);
+        $this->assertSame(1, $result->pagination->currentPage);
     }
 
     public function testDemoReturnsCfdiResponseDtoOnSuccess(): void

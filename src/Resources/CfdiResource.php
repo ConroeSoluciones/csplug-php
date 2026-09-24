@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Csfacturacion\CsPlug\Resources;
 
 use Csfacturacion\CsPlug\DTOs\Requests\CfdiCancelarRequestDTO;
+use Csfacturacion\CsPlug\DTOs\Requests\CfdiListQueryDTO;
 use Csfacturacion\CsPlug\DTOs\Requests\CfdiTimbrarRequestDTO;
+use Csfacturacion\CsPlug\DTOs\Responses\CfdiListResponseDTO;
 use Csfacturacion\CsPlug\DTOs\Responses\CfdiResponseDTO;
 use Csfacturacion\CsPlug\Model\HttpMethod;
 use Csfacturacion\CsPlug\Model\RequestOptions;
@@ -41,6 +43,26 @@ final class CfdiResource extends BaseResource
         $dataArray = is_array($data) ? $data : [];
 
         return CfdiResponseDTO::fromTimbre($dataArray);
+    }
+
+    public function list(
+        ?CfdiListQueryDTO $query = null,
+        ?RequestOptions $options = null,
+    ): CfdiListResponseDTO {
+        $request = $this->requestFactory->createRequest(
+            uri: self::ENDPOINT,
+            queryParams: ($query ?? new CfdiListQueryDTO())->toArray(),
+            options: $options,
+        );
+
+        $response = $this->client->send($request);
+
+        $this->handleResponse($response);
+
+        /** @var array<string, mixed> $body */
+        $body = $response->bodyAsArray();
+
+        return CfdiListResponseDTO::fromArray($body);
     }
 
     public function demo(
